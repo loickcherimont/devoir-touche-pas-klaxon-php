@@ -4,12 +4,13 @@
     "type": "project",
     "license": "MIT",
     "autoload": {
-        "psr-4": {
-            "Loick\\DevoirTouchePasKlaxonPhp\\": "App/"
-        }
+        "psr-4": { "App\\": "App/" },
+        "files": ["bootstrap.php"]
     },
     "scripts": {
-        "dev": "php -S localhost:8080 -t public"
+        "dev": "php -S localhost:8080 -t public public/index.php",
+        "phpstan": "phpstan analyse App Router public templates --level=5",
+        "phpstan:strict": "phpstan analyse App Router public templates --level=8"
     },
     "authors": [
         {
@@ -20,5 +21,8 @@
     "require-dev": {
         "phpunit/phpunit": "^13.3",
         "phpstan/phpstan": "^2.2"
+    },
+    "require": {
+        "izniburak/router": "^3.1"
     }
 }

@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-	<meta charset='UTF-8'>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>Touche pas au klaxon</title>
-	<link rel="stylesheet" href='/styles/index.css'>
-</head>
-<body>
-	<?php require __DIR__ . '/../templates/footer.php'; ?>
+<?php
+
+/**
+ * Front controller — the single entry point of the app.
+ *
+ * This file runs on EVERY request.
+ * - If the request targets a real file (CSS, JS, image...), we return false
+ *   so the PHP dev server can serve it as-is.
+ * - Otherwise, we hand the request to the router, which decides what to show.
+ */
+
+// Composer autoloader: loads the router library classes without manual require.
+require __DIR__ . '/../vendor/autoload.php';
+
+$path = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+if ($path !== __DIR__ . '/' && file_exists($path)) {
+    return false;
+}
+
+require __DIR__ . '/../Router/routes.php';
