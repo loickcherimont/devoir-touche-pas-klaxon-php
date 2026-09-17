@@ -1,0 +1,28 @@
+{
+  "name": "devoir-touche-pas-klaxon-php",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sass:watch": "sass --watch --load-path=node_modules assets/scss/index.scss:public/styles/index.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loickcherimont/devoir-touche-pas-klaxon-php.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/loickcherimont/devoir-touche-pas-klaxon-php/issues"
+  },
+  "homepage": "https://github.com/loickcherimont/devoir-touche-pas-klaxon-php#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.8"
+  },
+  "devDependencies": {
+    "sass": "^1.104.1"
+  }
+}
