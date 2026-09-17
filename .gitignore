@@ -1,0 +1,26 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# PHP tools
+/.phpunit.result.cache
+/.phpstan.cache/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Sass
+*.css.map
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
