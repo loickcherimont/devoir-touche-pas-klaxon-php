@@ -1,0 +1,24 @@
+{
+    "name": "loick/devoir-touche-pas-klaxon-php",
+    "description": "CEF Homework - Enterprise web application made with PHP to manage car sharing",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Loick\\DevoirTouchePasKlaxonPhp\\": "App/"
+        }
+    },
+    "scripts": {
+        "dev": "php -S localhost:8080 -t public"
+    },
+    "authors": [
+        {
+            "name": "loickcherimont",
+            "email": "loickcherimont@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^13.3",
+        "phpstan/phpstan": "^2.2"
+    }
+}
