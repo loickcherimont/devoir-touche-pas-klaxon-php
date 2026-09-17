@@ -16,6 +16,7 @@
 
 # Sass
 *.css.map
+/public/styles/
 
 # IDE
 .idea/
