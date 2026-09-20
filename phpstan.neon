@@ -1,0 +1,10 @@
+parameters:
+    level: 8
+    paths:
+        - App
+        - Core
+        - Router
+        - public
+        - templates
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
