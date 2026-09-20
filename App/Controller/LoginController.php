@@ -2,14 +2,13 @@
 
 namespace App\Controller;
 
-use App\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Login page controller: renders the login form.
  */
-class LoginController
+class LoginController extends AbstractController
 {
 	/**
 	 * Renders the login page.
@@ -20,8 +19,6 @@ class LoginController
 	 */
 	public function index(Request $request, Response $response): Response
 	{
-		$response->setContent(View::page('login'));
-
-		return $response;
+        return $this->render('login');
 	}
 }

@@ -4,13 +4,13 @@
     "type": "project",
     "license": "MIT",
     "autoload": {
-        "psr-4": { "App\\": "App/" },
+        "psr-4": { "App\\": "App/", "Core\\": "Core/" },
         "files": ["bootstrap.php"]
     },
     "scripts": {
         "dev": "php -S localhost:8080 -t public public/index.php",
-        "phpstan": "phpstan analyse App Router public templates --level=5",
-        "phpstan:strict": "phpstan analyse App Router public templates --level=8"
+        "phpstan": "phpstan analyse",
+        "phpstan:strict": "phpstan analyse -l 8"
     },
     "authors": [
         {

@@ -11,12 +11,14 @@ class View
 	/**
 	 * Renders a full HTML page and returns it as a string.
 	 *
-	 * @param string $content Template file name without the .php extension,
-	 *                        e.g. "login" renders templates/login.php.
+	 * @param string               $content Template file name without the .php extension,
+	 *                                      e.g. "login" renders templates/login.php.
+	 * @param array<string, mixed> $data    Variables made available to the templates.
 	 * @return string The complete page as an HTML string.
 	 */
-	public static function page(string $content): string
+	public static function page(string $content, array $data = []): string
 	{
+		extract($data, EXTR_SKIP);
 		ob_start();
 
 		require ROOT_PATH . '/templates/header.php';
