@@ -12,6 +12,8 @@
 // Composer autoloader: loads the router library classes without manual require.
 require __DIR__ . '/../vendor/autoload.php';
 
+session_start();
+
 $path = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ($path !== __DIR__ . '/' && file_exists($path)) {

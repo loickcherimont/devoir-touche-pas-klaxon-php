@@ -33,4 +33,15 @@ abstract class AbstractModel
 
         return $query->fetchAll();
     }
+
+    /**
+     * Returns the user with the specified email.
+     *
+     */
+    protected function findByEmail(string $stmt, array $params = [])
+    {
+        $query = $this->pdo->prepare($stmt);
+        $query->execute($params);
+        return $query->fetch(PDO::FETCH_OBJ);
+    }
 }

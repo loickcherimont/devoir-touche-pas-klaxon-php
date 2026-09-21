@@ -10,9 +10,3 @@
 
 <body>
 	<div class="container">
-	<nav class='navbar navbar-expand-lg bg-body-tertiary border border-3 rounded mt-3'>
-		<div class='container-fluid'>
-			<a class='navbar-brand'>Touche pas au klaxon</a>
-			<a class='btn btn-primary' href='/login' role='button'>Connexion</a>
-		</div>
-	</nav>
