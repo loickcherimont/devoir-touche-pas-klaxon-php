@@ -14,7 +14,7 @@
 			<div class='container-fluid'>
 				<a class='navbar-brand'>Touche pas au klaxon</a>
 				<?php if (isset($_SESSION['auth_logged_in'])): ?>
-					<a class='btn btn-primary' href='#' role='button'>Créer un trajet</a>
+					<a class='btn btn-primary' href='/trips/new' role='button'>Créer un trajet</a>
 					<p>Bonjour <?= $_SESSION['first_name'] ?> <?= $_SESSION['last_name'] ?> </p>
 					<a class='btn btn-dark' href='/logout' role='button'>Déconnexion</a>
 				<?php elseif (empty($hideLoginButton)): ?>
