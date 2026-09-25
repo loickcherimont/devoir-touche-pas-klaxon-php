@@ -29,35 +29,45 @@ class LoginController extends AbstractController
 	 */
 	public function index(Request $request, Response $response): Response
 	{
-		return $this->render('login');
+		return $this->render('login', ['hideLoginButton' => true]);
 	}
 
-	public function login(Request $request)
+	/**
+	 * Handles the POST /login form: checks the credentials and, if valid,
+	 * stores the user in the session, then redirects to the homepage.
+	 *
+	 * @param Request  $request  Incoming HTTP request containing email and pass.
+	 * @param Response $response Outgoing HTTP response to redirect.
+	 * @return Response The redirect response, or the login page with an error.
+	 */
+	public function login(Request $request, Response $response): Response
 	{
-		$error = null;
-		// Fetch data in DB
-		$user = $this->userModel->getUserByEmail(htmlspecialchars($request->request->get('email')));
+		$user = $this->userModel->getUserByEmail((string) $request->request->get('email'));
 
-		if ($user->email === $request->request->get('email') && password_verify($request->request->get('pass'), $user->mot_de_passe)) {
+		if ($user !== false && password_verify((string) $request->request->get('pass'), (string) $user['mot_de_passe'])) {
 
 			session_regenerate_id(true);
 
-			$_SESSION['auth_user_id'] = $user->id;
+			$_SESSION['auth_user_id'] = $user['id'];
 			$_SESSION['auth_logged_in'] = true;
-			$_SESSION['first_name'] = $user->prenom;
-			$_SESSION['last_name'] = $user->nom;
-			header('Location: /');
-			exit;
+			$_SESSION['first_name'] = $user['prenom'];
+			$_SESSION['last_name'] = $user['nom'];
+			return $this->redirect($response, '/');
 		}
-		$error = 'Email ou mot de passe incorrect';
-		return $this->render('login', ['error' => $error]);
-		// Else -> Error in login
+
+		return $this->render('login', ['error' => 'Email ou mot de passe incorrect']);
 	}
 
-	public function logout()
+	/**
+	 * Destroys the current session then redirects to the homepage.
+	 *
+	 * @param Request  $request  Incoming HTTP request (unused for now).
+	 * @param Response $response Outgoing HTTP response to redirect.
+	 * @return Response The redirect response.
+	 */
+	public function logout(Request $request, Response $response): Response
 	{
 		session_destroy();
-		header('Location: /');
-		exit;
+		return $this->redirect($response, '/');
 	}
 }

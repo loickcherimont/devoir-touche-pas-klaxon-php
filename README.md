@@ -43,6 +43,27 @@ composer dev
 
 Your app is now running on [http://localhost:8080](http://localhost:8080).
 
+## ▶️ Usage
+
+### Test accounts
+
+The `Core/data.sql` seed file ships **20 users** whose passwords follow a simple
+convention (see the comment at the top of the `users` inserts):
+
+```
+[3 first letters of the first name, capitalized][3 first letters of the last name, capitalized]@test
+```
+
+Example for the first user, **Alexandre Martin** → `AleMar@test`.
+
+| Email | Password |
+| --- | --- |
+| `alexandre.martin@email.fr` | `AleMar@test` |
+| `sophie.dubois@email.fr` | `SopDub@test` |
+| `julien.bernard@email.fr` | `JulBer@test` |
+
+Any other user in `Core/data.sql` follows the same rule.
+
 ## 🔍 Code Quality
 
 Run PHPStan (static analysis) to **qualify the code before every push or

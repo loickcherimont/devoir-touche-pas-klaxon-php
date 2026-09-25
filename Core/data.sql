@@ -17,6 +17,8 @@ VALUES
     (12, 'Reims');
 
 
+-- sample mot_de_passe : [3 first letters of prenom, capitalized][3 first letters of nom, capitalized]@test
+-- ex : Alexandre Martin -> AleMar@test
 INSERT INTO 
     users (id, nom, prenom, telephone, email, mot_de_passe, role) 
 VALUES

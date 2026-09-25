@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class HomeController extends AbstractController
 {
-    private  TripModel $tripModel;
+    private TripModel $tripModel;
 
     /**
      * The router instantiates controllers without arguments,
