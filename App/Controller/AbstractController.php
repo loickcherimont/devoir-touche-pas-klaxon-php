@@ -36,8 +36,19 @@ abstract class AbstractController
      * @param string   $url      The destination URL (ex: '/').
      * @return Response The redirect response.
      */
-    protected function redirect(Response $response, string $url): Response {
+    protected function redirect(Response $response, string $url): Response
+    {
         $response->headers->set('Location', $url);
         return $response->setStatusCode(Response::HTTP_FOUND);
+    }
+
+    /**
+     * Tells whether the current user is authenticated.
+     *
+     * @return bool True when a user is logged in, false otherwise.
+     */
+    protected function isLoggedIn(): bool
+    {
+        return isset($_SESSION['auth_logged_in']);
     }
 }
