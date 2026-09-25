@@ -2,13 +2,15 @@
 
 namespace App;
 
+use DateTimeImmutable;
+
 /**
  * Formatter
  *
- * Small stateless helpers used by the templates to display dates.
+ * Small stateless helpers to display dates.
  * Centralizes the format so it is not duplicated in every template (DRY).
  */
-final class Formatter
+final class DateTimeFormatter
 {
     /**
      * Formats a date-like value as d/m/Y.
@@ -34,5 +36,9 @@ final class Formatter
         $timestamp = strtotime($value);
 
         return $timestamp === false ? '' : date('H:i', $timestamp);
+    }
+
+    public static function getDatetimeFormat(string $date, string $time): DateTimeImmutable {
+        return new DateTimeImmutable("$date $time");
     }
 }

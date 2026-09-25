@@ -17,7 +17,7 @@
 					<a class='btn btn-primary' href='/trips/new' role='button'>Créer un trajet</a>
 					<p>Bonjour <?= $_SESSION['first_name'] ?> <?= $_SESSION['last_name'] ?> </p>
 					<a class='btn btn-dark' href='/logout' role='button'>Déconnexion</a>
-				<?php elseif (empty($hideLoginButton)): ?>
+				<?php elseif (empty($hideButton)): ?>
 					<a class='btn btn-primary' href='/login' role='button'>Connexion</a>
 				<?php endif; ?>
 			</div>

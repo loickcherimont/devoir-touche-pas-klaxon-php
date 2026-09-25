@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Model\TripModel;
+use App\Model\Trip\TripModel;
 use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

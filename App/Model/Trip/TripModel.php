@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Trip;
 
 use Core\AbstractModel;
 
@@ -40,5 +40,27 @@ SQL;
     public function getTrips(): array
     {
         return $this->findAll(self::SQL_AFFICHAGE);
+    }
+
+    /**
+     * Inserts a new trip in the database.
+     *
+     * @param TripDTO $tripDTO The trip to insert, without its id (auto-increment)
+     */
+    public function saveTrip(TripDTO $tripDTO): void
+    {
+        $this->save(
+            'INSERT INTO 
+                trips(gdh_depart, gdh_arrivee, places_disponibles, agence_depart_id, agence_arrivee_id, users_id)
+            VALUES (:gdh_depart, :gdh_arrivee, :places_disponibles, :agence_depart_id, :agence_arrivee_id, :users_id)',
+            [
+                'gdh_depart' => $tripDTO->gdhDepart->format('Y-m-d H:i:s'),
+                'gdh_arrivee' => $tripDTO->gdhArrivee->format('Y-m-d H:i:s'),
+                'places_disponibles' => $tripDTO->placesDisponibles,
+                'agence_depart_id' => $tripDTO->agenceDepartId,
+                'agence_arrivee_id' => $tripDTO->agenceArriveeId,
+                'users_id' => (int) $_SESSION['auth_user_id'],
+            ]
+        );
     }
 }
