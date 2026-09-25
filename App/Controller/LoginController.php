@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Model\UserModel;
+use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -10,6 +12,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class LoginController extends AbstractController
 {
+
+	private UserModel $userModel;
+
+	public function __construct()
+	{
+		$this->userModel = new UserModel(Database::getInstance()->connection());
+	}
+
 	/**
 	 * Renders the login page.
 	 *
@@ -19,6 +29,45 @@ class LoginController extends AbstractController
 	 */
 	public function index(Request $request, Response $response): Response
 	{
-        return $this->render('login');
+		return $this->render('login', ['hideLoginButton' => true]);
+	}
+
+	/**
+	 * Handles the POST /login form: checks the credentials and, if valid,
+	 * stores the user in the session, then redirects to the homepage.
+	 *
+	 * @param Request  $request  Incoming HTTP request containing email and pass.
+	 * @param Response $response Outgoing HTTP response to redirect.
+	 * @return Response The redirect response, or the login page with an error.
+	 */
+	public function login(Request $request, Response $response): Response
+	{
+		$user = $this->userModel->getUserByEmail((string) $request->request->get('email'));
+
+		if ($user !== false && password_verify((string) $request->request->get('pass'), (string) $user['mot_de_passe'])) {
+
+			session_regenerate_id(true);
+
+			$_SESSION['auth_user_id'] = $user['id'];
+			$_SESSION['auth_logged_in'] = true;
+			$_SESSION['first_name'] = $user['prenom'];
+			$_SESSION['last_name'] = $user['nom'];
+			return $this->redirect($response, '/');
+		}
+
+		return $this->render('login', ['error' => 'Email ou mot de passe incorrect']);
+	}
+
+	/**
+	 * Destroys the current session then redirects to the homepage.
+	 *
+	 * @param Request  $request  Incoming HTTP request (unused for now).
+	 * @param Response $response Outgoing HTTP response to redirect.
+	 * @return Response The redirect response.
+	 */
+	public function logout(Request $request, Response $response): Response
+	{
+		session_destroy();
+		return $this->redirect($response, '/');
 	}
 }

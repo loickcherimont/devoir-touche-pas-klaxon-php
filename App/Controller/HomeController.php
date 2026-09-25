@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Model\TripModel;
-use App\View;
 use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

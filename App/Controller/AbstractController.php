@@ -28,4 +28,16 @@ abstract class AbstractController
 
         return $response;
     }
+
+    /**
+     * Turns a response into an HTTP redirect (302 Found) to the given URL.
+     *
+     * @param Response $response The HTTP response to turn into a redirect.
+     * @param string   $url      The destination URL (ex: '/').
+     * @return Response The redirect response.
+     */
+    protected function redirect(Response $response, string $url): Response {
+        $response->headers->set('Location', $url);
+        return $response->setStatusCode(Response::HTTP_FOUND);
+    }
 }

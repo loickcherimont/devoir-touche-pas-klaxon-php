@@ -17,29 +17,31 @@ VALUES
     (12, 'Reims');
 
 
-INSERT IGNORE INTO
-    users (id, nom, prenom, telephone, email, mot_de_passe, role)
+-- sample mot_de_passe : [3 first letters of prenom, capitalized][3 first letters of nom, capitalized]@test
+-- ex : Alexandre Martin -> AleMar@test
+INSERT INTO 
+    users (id, nom, prenom, telephone, email, mot_de_passe, role) 
 VALUES
-    (1, 'Martin', 'Alexandre', '0612345678', 'alexandre.martin@email.fr', '$2y$10$placeholder_hash_01', 'user'),
-    (2, 'Dubois', 'Sophie', '0698765432', 'sophie.dubois@email.fr', '$2y$10$placeholder_hash_02', 'user'),
-    (3, 'Bernard', 'Julien', '0622446688', 'julien.bernard@email.fr', '$2y$10$placeholder_hash_03', 'user'),
-    (4, 'Moreau', 'Camille', '0611223344', 'camille.moreau@email.fr', '$2y$10$placeholder_hash_04', 'user'),
-    (5, 'Lefèvre', 'Lucie', '0777889900', 'lucie.lefevre@email.fr', '$2y$10$placeholder_hash_05', 'user'),
-    (6, 'Leroy', 'Thomas', '0655443322', 'thomas.leroy@email.fr', '$2y$10$placeholder_hash_06', 'user'),
-    (7, 'Roux', 'Chloé', '0633221199', 'chloe.roux@email.fr', '$2y$10$placeholder_hash_07', 'user'),
-    (8, 'Petit', 'Maxime', '0766778899', 'maxime.petit@email.fr', '$2y$10$placeholder_hash_08', 'user'),
-    (9, 'Garnier', 'Laura', '0688776655', 'laura.garnier@email.fr', '$2y$10$placeholder_hash_09', 'user'),
-    (10, 'Dupuis', 'Antoine', '0744556677', 'antoine.dupuis@email.fr', '$2y$10$placeholder_hash_10', 'user'),
-    (11, 'Lefebvre', 'Emma', '0699887766', 'emma.lefebvre@email.fr', '$2y$10$placeholder_hash_11', 'user'),
-    (12, 'Fontaine', 'Louis', '0655667788', 'louis.fontaine@email.fr', '$2y$10$placeholder_hash_12', 'user'),
-    (13, 'Chevalier', 'Clara', '0788990011', 'clara.chevalier@email.fr', '$2y$10$placeholder_hash_13', 'user'),
-    (14, 'Robin', 'Nicolas', '0644332211', 'nicolas.robin@email.fr', '$2y$10$placeholder_hash_14', 'user'),
-    (15, 'Gauthier', 'Marine', '0677889922', 'marine.gauthier@email.fr', '$2y$10$placeholder_hash_15', 'user'),
-    (16, 'Fournier', 'Pierre', '0722334455', 'pierre.fournier@email.fr', '$2y$10$placeholder_hash_16', 'user'),
-    (17, 'Girard', 'Sarah', '0688665544', 'sarah.girard@email.fr', '$2y$10$placeholder_hash_17', 'user'),
-    (18, 'Lambert', 'Hugo', '0611223366', 'hugo.lambert@email.fr', '$2y$10$placeholder_hash_18', 'user'),
-    (19, 'Masson', 'Julie', '0733445566', 'julie.masson@email.fr', '$2y$10$placeholder_hash_19', 'user'),
-    (20, 'Henry', 'Arthur', '0666554433', 'arthur.henry@email.fr', '$2y$10$placeholder_hash_20', 'user');
+    (1, 'Martin', 'Alexandre', '0612345678', 'alexandre.martin@email.fr', '$2y$10$BTdfxF//cUTfoyddZ5c6Yu94AFephdtRnz6Lanb2HGHI/dteDhzs6', 'user'),
+    (2, 'Dubois', 'Sophie', '0698765432', 'sophie.dubois@email.fr', '$2y$10$iSskoh8rglZnJwkgaOgDNOUY0TSXntWBX.VMIcDqtyBJccmIPxppq', 'user'),
+    (3, 'Bernard', 'Julien', '0622446688', 'julien.bernard@email.fr', '$2y$10$6vB0fGN4fIY7tIsx5/wbmOHVnU280kBUjMy1dMZckxTn7O4pZhQ46', 'user'),
+    (4, 'Moreau', 'Camille', '0611223344', 'camille.moreau@email.fr', '$2y$10$FPjMAxAc7QaDOlPQ8FAmeui1VX9OrcVyhNDafKu58MumbkUiclarC', 'user'),
+    (5, 'Lefèvre', 'Lucie', '0777889900', 'lucie.lefevre@email.fr', '$2y$10$bMClHbgH90wmOwKFMxe0UOcm1J2H3Aw3pIrfrXPltu6ZccjsCffgW', 'user'),
+    (6, 'Leroy', 'Thomas', '0655443322', 'thomas.leroy@email.fr', '$2y$10$ebik5RktNVxdZE8Eq5en0eadATCbKxyRumbQ/hC94GzZfNyoICmJS', 'user'),
+    (7, 'Roux', 'Chloé', '0633221199', 'chloe.roux@email.fr', '$2y$10$YPihYzPC6.SmZe2BaClyN.xUdtw9KtrkRU3OWvWejDsq7DsssgOqS', 'user'),
+    (8, 'Petit', 'Maxime', '0766778899', 'maxime.petit@email.fr', '$2y$10$hRj49IX4MYF35lKN5aE6o.R3N/fDwTcFVIa0RUhx8sSALE3TdSLdS', 'user'),
+    (9, 'Garnier', 'Laura', '0688776655', 'laura.garnier@email.fr', '$2y$10$VSKg6sClRpfXRcj/0xEXqOVDTkpkCrB9LjNRdYIA9NEGCc52zF5qa', 'user'),
+    (10, 'Dupuis', 'Antoine', '0744556677', 'antoine.dupuis@email.fr', '$2y$10$jcj/qJMe0KHa2qWYqU2lEeHoqvSMUzEo5f8kbfW6reFVs15VNqZ3K', 'user'),
+    (11, 'Lefebvre', 'Emma', '0699887766', 'emma.lefebvre@email.fr', '$2y$10$NsNAmwaWRI3BGMMJOqoSMuoHDqv/6ivP/g8e1Iu3Z2etKRbTFpnNm', 'user'),
+    (12, 'Fontaine', 'Louis', '0655667788', 'louis.fontaine@email.fr', '$2y$10$dduc4265jlJNmt2pzLE4LeUFHFToRh0rrZf.XAabI3yT68Jr69awe', 'user'),
+    (13, 'Chevalier', 'Clara', '0788990011', 'clara.chevalier@email.fr', '$2y$10$ry3FJT9eqTgu5.i6.PXrCON9a6/87aQcxTQcxhoF7I/oCEkaotTVK', 'user'),
+    (14, 'Robin', 'Nicolas', '0644332211', 'nicolas.robin@email.fr', '$2y$10$/f1hxv4W.oUYy.Re6kJt7eYdTAMicoTtzdNCN3N8HYjmSPR/b./2y', 'user'),
+    (15, 'Gauthier', 'Marine', '0677889922', 'marine.gauthier@email.fr', '$2y$10$nXK9Z8CCbpl3sAP2VuoCp.kUIN5fwJvLohX5O4HSfq5xvAcJXj8Z6', 'user'),
+    (16, 'Fournier', 'Pierre', '0722334455', 'pierre.fournier@email.fr', '$2y$10$0yEZguXGH1j39GvETqLJ1OcodVjc4pnTxH/cv5T0EL96HMPaFI6q.', 'user'),
+    (17, 'Girard', 'Sarah', '0688665544', 'sarah.girard@email.fr', '$2y$10$0IVlNVoGNUvBeiOW0TwZkuv4c.LkTkq1wlrxBGn/xd5QCG8q0rcqm', 'user'),
+    (18, 'Lambert', 'Hugo', '0611223366', 'hugo.lambert@email.fr', '$2y$10$YlHgX67izNH0WBESTBbiH.AxB2UoC5KnJ1xAn0eZYVtv5BXZpQGcy', 'user'),
+    (19, 'Masson', 'Julie', '0733445566', 'julie.masson@email.fr', '$2y$10$qfvcLOopmRjPKpM1.RvEBecN7XQwECK07RIPY1b60M.zppT5iSZYa', 'user'),
+    (20, 'Henry', 'Arthur', '0666554433', 'arthur.henry@email.fr', '$2y$10$H2hdua5XS7OywvMCW.3t6.GkOGrR.djTashUHjP5hgbyFNZtg/AxO', 'user');
 
 INSERT IGNORE INTO
     trips (id, gdh_depart, gdh_arrivee, places_disponibles, agence_depart_id, agence_arrivee_id, users_id)
