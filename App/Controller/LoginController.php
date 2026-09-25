@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Model\UserModel;
+use App\Model\User\UserModel;
 use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +29,7 @@ class LoginController extends AbstractController
 	 */
 	public function index(Request $request, Response $response): Response
 	{
-		return $this->render('login', ['hideLoginButton' => true]);
+		return $this->render('login', ['hideButton' => true]);
 	}
 
 	/**

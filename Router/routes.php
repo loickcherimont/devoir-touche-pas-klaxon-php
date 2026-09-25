@@ -24,7 +24,9 @@ $router->get('/', 'HomeController@index');
 $router->get('/logout', 'LoginController@logout');
 $router->get('/login', 'LoginController@index');
 $router->get('/trips/new', 'TripController@index');
+
 $router->post('/login', 'LoginController@login');
+$router->post('/trips/new', 'TripController@create');
 
 // Let the router search its routes for the current request.
 $router->run();

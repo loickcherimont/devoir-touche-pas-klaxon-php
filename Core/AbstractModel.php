@@ -30,7 +30,6 @@ abstract class AbstractModel
     {
         $query = $this->pdo->prepare($stmt);
         $query->execute($params);
-
         return $query->fetchAll();
     }
 
@@ -47,5 +46,18 @@ abstract class AbstractModel
         $query->execute($params);
 
         return $query->fetch();
+    }
+
+    /**
+     * Executes a prepared statement that does not return any row
+     * (INSERT, UPDATE, DELETE).
+     *
+     * @param string               $stmt   The SQL query with placeholders (ex: :id)
+     * @param array<string, mixed> $params Values bound to the placeholders
+     */
+    protected function save(string $stmt, array $params = []): void
+    {
+        $query = $this->pdo->prepare($stmt);
+        $query->execute($params);
     }
 }
