@@ -2,6 +2,7 @@
 $agencies = $agencies ?? [];
 ?>
 <div class='container'>
+	<a class='btn btn-outline-secondary' href='/' role='button'>Retour à l'accueil</a>
 	<h1>Proposer un trajet</h1>
 	<form action='/trips/new' method='POST'>
 		<?php if (isset($error)): ?>

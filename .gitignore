@@ -3,8 +3,8 @@
 /node_modules/
 
 # PHP tools
-/.phpunit.result.cache
 /.phpstan.cache/
+/.phpunit.cache/
 
 # Environment
 .env

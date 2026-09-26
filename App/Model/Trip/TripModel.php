@@ -33,6 +33,14 @@ ORDER BY depart;
 SQL;
 
     /**
+     * SQL query inserting a new trip.
+     */
+    private const SQL_INSERT = <<<'SQL'
+INSERT INTO trips(gdh_depart, gdh_arrivee, places_disponibles, agence_depart_id, agence_arrivee_id, users_id)
+VALUES (:gdh_depart, :gdh_arrivee, :places_disponibles, :agence_depart_id, :agence_arrivee_id, :users_id)
+SQL;
+
+    /**
      * Returns the trips to display on the home page.
      *
      * @return array<array<string, mixed>> The trips as associative arrays
@@ -46,20 +54,19 @@ SQL;
      * Inserts a new trip in the database.
      *
      * @param TripDTO $tripDTO The trip to insert, without its id (auto-increment)
+     * @param int     $userId  Id of the user who created the trip
      */
-    public function saveTrip(TripDTO $tripDTO): void
+    public function saveTrip(TripDTO $tripDTO, int $userId): void
     {
         $this->save(
-            'INSERT INTO 
-                trips(gdh_depart, gdh_arrivee, places_disponibles, agence_depart_id, agence_arrivee_id, users_id)
-            VALUES (:gdh_depart, :gdh_arrivee, :places_disponibles, :agence_depart_id, :agence_arrivee_id, :users_id)',
+            self::SQL_INSERT,
             [
                 'gdh_depart' => $tripDTO->gdhDepart->format('Y-m-d H:i:s'),
                 'gdh_arrivee' => $tripDTO->gdhArrivee->format('Y-m-d H:i:s'),
                 'places_disponibles' => $tripDTO->placesDisponibles,
                 'agence_depart_id' => $tripDTO->agenceDepartId,
                 'agence_arrivee_id' => $tripDTO->agenceArriveeId,
-                'users_id' => (int) $_SESSION['auth_user_id'],
+                'users_id' => $userId,
             ]
         );
     }

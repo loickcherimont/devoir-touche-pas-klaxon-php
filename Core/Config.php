@@ -9,10 +9,12 @@ final class Config
 {
 
 	/**
-     * @param string $key     environment variable name (ex: 'DB_HOST')
-     * @param string $default value to use if the environment variable does not exist
-     * @return string found value or $default
-     */
+	 * Reads a configuration value from the environment.
+	 *
+	 * @param string $key     Environment variable name (ex: 'DB_HOST')
+	 * @param string $default Value to use when the variable is not defined
+	 * @return string        The value found, or $default
+	 */
 	public static function get(string $key, string $default = ''): string
 	{
 		$value = getenv($key);
