@@ -6,5 +6,6 @@ parameters:
         - Router
         - public
         - templates
+        - tests
     treatPhpDocTypesAsCertain: false
-    reportUnmatchedIgnoredErrors: false
+    reportUnmatchedIgnoredErrors: true

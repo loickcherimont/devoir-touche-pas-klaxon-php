@@ -83,7 +83,7 @@ class TripController extends AbstractController
 			(int) $request->request->get('places_disponibles')
 		);
 
-		$this->tripModel->saveTrip($createTripDTO);
+		$this->tripModel->saveTrip($createTripDTO, (int) $_SESSION['auth_user_id']);
 		return $this->redirect($response, '/');
 	}
 
@@ -147,7 +147,7 @@ class TripController extends AbstractController
 
 	/**
 	 * Validates the departure and arrival date/time: both in the future,
-	 * arrival strictly after departure. Timezone: Europe/Paris.
+	 * arrival strictly after departure.
 	 *
 	 * @param Request $request Incoming HTTP request.
 	 * @return string|null An error message when the dates are invalid, null otherwise.
@@ -163,9 +163,6 @@ class TripController extends AbstractController
 			return "Le départ et l'arrivée (date et heure) sont obligatoires.";
 		}
 
-		date_default_timezone_set('Europe/Paris');
-		$now = new DateTimeImmutable();
-
 		try {
 			$gdhDepart = DateTimeFormatter::getDatetimeFormat($dateDepart, $heureDepart);
 			$gdhArrivee = DateTimeFormatter::getDatetimeFormat($dateArrivee, $heureArrivee);
@@ -173,7 +170,7 @@ class TripController extends AbstractController
 			return 'Les dates saisies ne sont pas valides.';
 		}
 
-		if ($gdhDepart <= $now) {
+		if ($gdhDepart <= new DateTimeImmutable()) {
 			return "La date et l'heure de départ doivent être postérieures à maintenant.";
 		}
 

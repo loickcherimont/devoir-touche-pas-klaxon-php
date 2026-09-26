@@ -57,6 +57,17 @@ final class Database
     }
 
     /**
+     * Replaces the shared instance, mainly to inject a test double.
+     *
+     * @param self|null $instance The instance to share, or null to reset
+     *                           so the next getInstance() rebuilds a real one
+     */
+    public static function setInstance(?self $instance): void
+    {
+        self::$instance = $instance;
+    }
+
+    /**
      * The PDO connection used by the models.
      */
     public function connection(): PDO

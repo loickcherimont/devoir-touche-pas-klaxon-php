@@ -7,10 +7,13 @@
         "psr-4": { "App\\": "App/", "Core\\": "Core/" },
         "files": ["bootstrap.php"]
     },
+    "autoload-dev": {
+        "psr-4": { "Tests\\": "tests/"}
+    },
     "scripts": {
         "dev": "php -S localhost:8080 -t public public/index.php",
         "phpstan": "phpstan analyse",
-        "phpstan:strict": "phpstan analyse -l 8"
+        "test": "./vendor/bin/phpunit"
     },
     "authors": [
         {

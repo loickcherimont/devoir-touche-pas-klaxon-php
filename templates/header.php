@@ -12,7 +12,7 @@
 	<div class="container">
 		<nav class='navbar navbar-expand-lg bg-body-tertiary border border-3 rounded mt-3'>
 			<div class='container-fluid'>
-				<a class='navbar-brand'>Touche pas au klaxon</a>
+				<a class='navbar-brand' href='/'>Touche pas au klaxon</a>
 				<?php if (isset($_SESSION['auth_logged_in'])): ?>
 					<a class='btn btn-primary' href='/trips/new' role='button'>Créer un trajet</a>
 					<p>Bonjour <?= $_SESSION['first_name'] ?> <?= $_SESSION['last_name'] ?> </p>

@@ -9,3 +9,10 @@
  */
 
 const ROOT_PATH = __DIR__;
+
+/**
+ * Default timezone of the application.
+ * Set once here so every date comparison is done on the same
+ * reference, instead of relying on the server or the browser one.
+ */
+date_default_timezone_set('Europe/Paris');

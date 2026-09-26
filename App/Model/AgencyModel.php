@@ -7,17 +7,17 @@ use Core\AbstractModel;
 /**
  * AgencyModel
  *
- * Data access for users.
+ * Data access for agencies.
  */
 class AgencyModel extends AbstractModel
 { 
 
     /**
-     * Returns the all agencies from database.
+     * Returns every agency from the database.
      *
-     * @return array<string, mixed>|false All agencies as an associative array, or false when no agencies found
+     * @return array<array<string, mixed>> All agencies as associative arrays
      */
-    public function getAllAgencies(): array|false
+    public function getAllAgencies(): array
     {
         return $this->findAll('SELECT * FROM agencies');
     }

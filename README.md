@@ -35,6 +35,13 @@ npm run sass:watch
 composer install
 ```
 
+Configuration is read from environment variables. Copy the provided template and
+adjust it to your local MySQL setup:
+
+```bash
+cp .env.example .env
+```
+
 Run the app:
 
 ```bash
@@ -64,19 +71,30 @@ Example for the first user, **Alexandre Martin** → `AleMar@test`.
 
 Any other user in `Core/data.sql` follows the same rule.
 
+## 🧪 Tests
+
+Unit tests cover the **database write operations** (the assignment requirement).
+They mock `PDO`, so the suite runs without a MySQL server.
+
+```bash
+# Run the whole suite
+composer test
+```
+
+| Test | Covers |
+| --- | --- |
+| `AbstractModelTest` | `save()` forwards the SQL and its params to PDO |
+| `TripModelTest` | `saveTrip()` turns a `TripDTO` into a correct INSERT |
+
 ## 🔍 Code Quality
 
 Run PHPStan (static analysis) to **qualify the code before every push or
-production deploy**: it checks the code without executing it. Default level is
-**5**; use level **8** for a serious check, especially before going to
-production.
+production deploy**: it checks the code without executing it, at level **8**,
+and covers `App`, `Core`, `Router`, `public`, `templates` and `tests`.
 
 ```bash
-# Default analysis (level 5)
+# Static analysis (level 8)
 composer phpstan
-
-# Serious check before production (level 8)
-composer phpstan:strict
 ```
 
 > [!IMPORTANT]  
