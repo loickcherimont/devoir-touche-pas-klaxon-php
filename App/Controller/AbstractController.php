@@ -43,6 +43,20 @@ abstract class AbstractController
     }
 
     /**
+     * Creates a JSON response for the small API endpoints of the application.
+     *
+     * @param array<string, int|string> $data Response data.
+     */
+    protected function json(array $data, int $statusCode = Response::HTTP_OK): Response
+    {
+        return new Response(
+            json_encode($data, JSON_THROW_ON_ERROR),
+            $statusCode,
+            ['Content-Type' => 'application/json'],
+        );
+    }
+
+    /**
      * Tells whether the current user is authenticated.
      *
      * @return bool True when a user is logged in, false otherwise.

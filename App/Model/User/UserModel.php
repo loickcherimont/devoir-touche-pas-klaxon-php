@@ -11,8 +11,14 @@ use PDO;
  * Data access for users.
  */
 class UserModel extends AbstractModel
-{ 
+{
 
+    /**
+     * SQL query to find a specific trip using its id.
+     */
+    private const SQL_FIND_USER_BY_EMAIL = <<<'SQL'
+        SELECT * FROM users WHERE email = :email
+        SQL;
     /**
      * Returns the first user matching the given email address.
      *
@@ -21,7 +27,7 @@ class UserModel extends AbstractModel
      */
     public function getUserByEmail(string $email): array|false
     {
-        return $this->findOne('SELECT * FROM users WHERE email = :email', ['email' => $email]);
+        return $this->findOne(self::SQL_FIND_USER_BY_EMAIL, ['email' => $email]);
     }
 
     /**
