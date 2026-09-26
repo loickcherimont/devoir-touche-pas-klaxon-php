@@ -49,6 +49,32 @@ class TripController extends AbstractController
 	}
 
 	/**
+     * Returns the details of one trip for the details modal.
+	 *
+     * @param int $id Trip identifier from the URL.
+     */
+    public function findDetailsById(int $id): Response
+    {
+        if (!$this->isLoggedIn()) {
+            return $this->json(['message' => 'Authentification requise.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $trip = $this->tripModel->findDetailsById($id);
+
+        if ($trip === null) {
+            return $this->json(['message' => 'Trajet introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json([
+            'authorFirstName' => $trip->authorFirstName,
+            'authorLastName' => $trip->authorLastName,
+            'phone' => $trip->phone,
+            'email' => $trip->email,
+            'availableSeats' => $trip->availableSeats,
+        ]);
+    }
+
+	/**
 	 * Handles the POST /trips/new form: validates the data, inserts the trip
 	 * in the database, then redirects to the homepage.
 	 *

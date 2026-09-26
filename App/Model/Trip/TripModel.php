@@ -17,6 +17,7 @@ class TripModel extends AbstractModel
      */
     private const SQL_AFFICHAGE = <<<'SQL'
 SELECT
+    trips.id,
     a_depart.nom AS depart,
     DATE(trips.gdh_depart) AS date_depart,
     TIME(trips.gdh_depart) AS heure_depart,
@@ -41,6 +42,21 @@ VALUES (:gdh_depart, :gdh_arrivee, :places_disponibles, :agence_depart_id, :agen
 SQL;
 
     /**
+     * SQL query selecting the contact details displayed in the trip modal.
+     */
+    private const SQL_FIND_TRIP_BY_ID = <<<'SQL'
+SELECT
+    users.prenom,
+    users.nom,
+    users.telephone,
+    users.email,
+    trips.places_disponibles
+FROM trips
+JOIN users ON users.id = trips.users_id
+WHERE trips.id = :id
+SQL;
+
+    /**
      * Returns the trips to display on the home page.
      *
      * @return array<array<string, mixed>> The trips as associative arrays
@@ -48,6 +64,28 @@ SQL;
     public function getTrips(): array
     {
         return $this->findAll(self::SQL_AFFICHAGE);
+    }
+
+    /**
+     * Returns the details displayed in the modal, or null if the trip is absent.
+     *
+     * @param int $id Trip identifier.
+     */
+    public function findDetailsById(int $id): ?TripDetailsDTO
+    {
+        $trip = $this->findOne(self::SQL_FIND_TRIP_BY_ID, ['id' => $id]);
+
+        if ($trip === false) {
+            return null;
+        }
+
+        return new TripDetailsDTO(
+            (string) $trip['prenom'],
+            (string) $trip['nom'],
+            (string) $trip['telephone'],
+            (string) $trip['email'],
+            (int) $trip['places_disponibles'],
+        );
     }
 
     /**

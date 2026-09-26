@@ -26,8 +26,24 @@
 
 ```bash
 npm install
+npm run build
+```
+
+`npm run build` compiles the Sass entry point into `public/styles/index.css` and
+copies `bootstrap.bundle.min.js` into `public/js/`, the only directories the PHP
+dev server exposes. Both are generated artifacts, so they are git-ignored.
+
+While developing, use the watcher instead — it recompiles the stylesheet on
+every change, and refresh the browser to pick them up:
+
+```bash
 npm run sass:watch
 ```
+
+> [!NOTE]
+> Bootstrap's JavaScript bundle is required by every interactive component
+> (modals, dropdowns, collapse...). Without it, `data-bs-*` attributes are
+> simply ignored and those components never open.
 
 ### 2. Composer dependencies
 

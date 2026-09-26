@@ -9,6 +9,8 @@
  * - Otherwise, we hand the request to the router, which decides what to show.
  */
 
+use Router\ApplicationRouter;
+
 // Composer autoloader: loads the router library classes without manual require.
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -20,4 +22,4 @@ if ($path !== __DIR__ . '/' && file_exists($path)) {
     return false;
 }
 
-require __DIR__ . '/../Router/routes.php';
+new ApplicationRouter()->run();

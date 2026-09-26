@@ -17,6 +17,8 @@
 # Sass
 *.css.map
 /public/styles/
+/public/js/*
+!/public/js/TripDetailsModal.js
 
 # IDE
 .idea/
