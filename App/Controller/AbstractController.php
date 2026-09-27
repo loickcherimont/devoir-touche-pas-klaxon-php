@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Model\User\UserRole;
 use App\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,12 +18,18 @@ abstract class AbstractController
     /**
      * Renders a template inside the shared page and returns the HTTP response.
      *
+     * The current role is injected here, once, so every template can rely on
+     * $userRole without reading $_SESSION itself: the view displays the data
+     * the controller gives it, it never digs into the session.
+     *
      * @param string               $template Template file name without .php extension
      * @param array<string, mixed> $data     Variables made available to the template
      * @return Response The response containing the rendered page
      */
     protected function render(string $template, array $data = []): Response
     {
+        $data['userRole'] = $this->currentRole();
+
         $response = new Response();
         $response->setContent(View::page($template, $data));
 
@@ -84,5 +91,31 @@ abstract class AbstractController
     protected function currentUserId(): ?int
     {
         return isset($_SESSION['auth_user_id']) ? (int) $_SESSION['auth_user_id'] : null;
+    }
+
+    /**
+     * Returns the role of the logged-in user, or null when nobody is logged
+     * in or when the stored role is unknown to the UserRole enum.
+     *
+     * `UserRole::tryFrom()` is the validation boundary: a role coming from
+     * the database is never trusted as-is, an unknown value simply becomes
+     * null here, once, instead of failing somewhere deeper.
+     *
+     * @return UserRole|null The role of the current user, or null when there is none.
+     */
+    protected function currentRole(): ?UserRole
+    {
+        return isset($_SESSION['role']) ? UserRole::tryFrom((string) $_SESSION['role']) : null;
+    }
+
+    /**
+     * Tells whether the current user holds exactly the given role.
+     *
+     * @param UserRole $role The role to test against.
+     * @return bool True when the current user has this role, false otherwise.
+     */
+    protected function hasRole(UserRole $role): bool
+    {
+        return $this->currentRole() === $role;
     }
 }

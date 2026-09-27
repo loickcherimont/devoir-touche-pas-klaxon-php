@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Model\User\UserModel;
+use App\Model\User\UserRole;
 use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,12 +30,16 @@ class LoginController extends AbstractController
 	 */
 	public function index(Request $request, Response $response): Response
 	{
-		return $this->render('login', ['hideButton' => true]);
+		return $this->render('login');
 	}
 
 	/**
-	 * Handles the POST /login form: checks the credentials and, if valid,
-	 * stores the user in the session, then redirects to the homepage.
+	 * Handles the POST /login form: checks the credentials and, if valid, stores
+	 * the user and its role in the session, then redirects to the page matching
+	 * that role (dashboard for an admin, home page otherwise).
+	 *
+	 * A user whose `role` is unknown to the UserRole enum is rejected here: the
+	 * application never grants an access it cannot name.
 	 *
 	 * @param Request  $request  Incoming HTTP request containing email and pass.
 	 * @param Response $response Outgoing HTTP response to redirect.
@@ -46,13 +51,23 @@ class LoginController extends AbstractController
 
 		if ($user !== false && password_verify((string) $request->request->get('pass'), (string) $user['mot_de_passe'])) {
 
+			$role = UserRole::tryFrom((string) $user['role']);
+
+			if ($role === null) {
+				// Role unknown in database: deny the login rather than granting an undefined access.
+				return $this->render('login', ['error' => 'Email ou mot de passe incorrect']);
+			}
+
 			session_regenerate_id(true);
 
 			$_SESSION['auth_user_id'] = $user['id'];
 			$_SESSION['auth_logged_in'] = true;
 			$_SESSION['first_name'] = $user['prenom'];
 			$_SESSION['last_name'] = $user['nom'];
-			return $this->redirect($response, '/', Response::HTTP_FOUND);
+			$_SESSION['role'] = $role->value;
+
+			// An admin starts on the dashboard, a user on the home page.
+			return $this->redirect($response, $role === UserRole::Admin ? '/admin' : '/', Response::HTTP_FOUND);
 		}
 
 		return $this->render('login', ['error' => 'Email ou mot de passe incorrect']);
