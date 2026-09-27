@@ -40,9 +40,11 @@ final class ApplicationRouter
         $this->router->get('/login', 'LoginController@index');
         $this->router->get('/trips/new', 'TripController@index');
         $this->router->get('/api/trips/:id', 'TripController@findDetailsById');
+        $this->router->get('/trips/update/:id', 'TripController@getUpdatePage');
 
         $this->router->post('/login', 'LoginController@login');
         $this->router->post('/trips/new', 'TripController@create');
+        $this->router->post('/trips/update/:id', 'TripController@update');
     }
 }
 

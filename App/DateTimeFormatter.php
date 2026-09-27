@@ -38,7 +38,17 @@ final class DateTimeFormatter
         return $timestamp === false ? '' : date('H:i', $timestamp);
     }
 
-    public static function getDatetimeFormat(string $date, string $time): DateTimeImmutable {
+    /**
+     * Combines a date and a time submitted by a form into a single
+     * DateTimeImmutable, ready to be compared or stored.
+     *
+     * @param string $date Date part (ex: '2026-10-18').
+     * @param string $time Time part (ex: '14:44').
+     * @return DateTimeImmutable The parsed departure/arrival date and time.
+     * @throws \Exception When the date and the time cannot be parsed.
+     */
+    public static function getDatetimeFormat(string $date, string $time): DateTimeImmutable
+    {
         return new DateTimeImmutable("$date $time");
     }
 }

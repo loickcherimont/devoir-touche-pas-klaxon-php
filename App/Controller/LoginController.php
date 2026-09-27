@@ -52,7 +52,7 @@ class LoginController extends AbstractController
 			$_SESSION['auth_logged_in'] = true;
 			$_SESSION['first_name'] = $user['prenom'];
 			$_SESSION['last_name'] = $user['nom'];
-			return $this->redirect($response, '/');
+			return $this->redirect($response, '/', Response::HTTP_FOUND);
 		}
 
 		return $this->render('login', ['error' => 'Email ou mot de passe incorrect']);
@@ -68,6 +68,6 @@ class LoginController extends AbstractController
 	public function logout(Request $request, Response $response): Response
 	{
 		session_destroy();
-		return $this->redirect($response, '/');
+		return $this->redirect($response, '/', Response::HTTP_FOUND);
 	}
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Model\Trip\TripModel;
+use App\Model\Trip\TripResponseDTO;
 use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,33 @@ class HomeController extends AbstractController
     {
         $trips = $this->tripModel->getTrips();
 
-        return $this->render('home', ['trips' => $trips]);
+        $tripsResponse = array_map(
+            fn (array $trip): TripResponseDTO => $this->toTripResponse($trip),
+            $trips
+        );
+
+        return $this->render('home', ['trips' => $tripsResponse]);
+    }
+
+    /**
+     * Turns a trip row coming from the database into a TripResponseDTO,
+     * adding whether the logged-in user is its author.
+     *
+     * @param array<string, mixed> $trip One trip row returned by TripModel::getTrips().
+     * @return TripResponseDTO The trip as displayed in the home page listing.
+     */
+    private function toTripResponse(array $trip): TripResponseDTO
+    {
+        return new TripResponseDTO(
+            id: (int) $trip['id'],
+            departureAgency: (string) $trip['depart'],
+            departureDate: (string) $trip['date_depart'],
+            departureTime: (string) $trip['heure_depart'],
+            destination: (string) $trip['destination'],
+            arrivalDate: (string) $trip['date_arrivee'],
+            arrivalTime: (string) $trip['heure_arrivee'],
+            availableSeats: (int) $trip['places_disponibles'],
+            userIsOwner: $this->currentUserId() === (int) $trip['users_id']
+        );
     }
 }
