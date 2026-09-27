@@ -1,38 +1,37 @@
-<?php $trips = $trips ?? [];
-?>
 <?php
 
-use App\DateTimeFormatter; ?>
+use App\DateTimeFormatter;
+use App\Model\User\UserRole;
 
+$trips = $trips ?? [];
+$userRole = $userRole ?? null; ?>
 
 <div class='container'>
-	<h1>Pour plus d'informations sur un trajet, veuillez vous connecter</h1>
-	<table class='table table-striped table-bordered text-center rounded'>
-		<thead class='table-dark'>
-			<tr>
-				<th scope='col'>Départ</th>
-				<th scope='col'>Date de départ</th>
-				<th scope='col'>Heure de départ</th>
-				<th scope='col'>Destination</th>
-				<th scope='col'>Date d'arrivée</th>
-				<th scope='col'>Heure d'arrivée</th>
-				<th scope='col'>Places disponibles</th>
-				<?php if (isset($_SESSION['auth_logged_in'])): ?>
-					<th></th>
-				<?php endif; ?>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($trips as $trip): ?>
+	<?php if ($userRole === UserRole::User): ?>
+		<h1>Trajets proposés</h1>
+		<table class='table table-striped table-bordered text-center rounded'>
+			<thead class='table-dark'>
 				<tr>
-					<td><?= htmlspecialchars($trip->departureAgency) ?></td>
-					<td><?= htmlspecialchars(DateTimeFormatter::date($trip->departureDate)) ?></td>
-					<td><?= htmlspecialchars(DateTimeFormatter::time($trip->departureTime)) ?></td>
-					<td><?= htmlspecialchars($trip->destination) ?></td>
-					<td><?= htmlspecialchars(DateTimeFormatter::date($trip->arrivalDate)) ?></td>
-					<td><?= htmlspecialchars(DateTimeFormatter::time($trip->arrivalTime)) ?></td>
-					<td><?= htmlspecialchars($trip->availableSeats) ?></td>
-					<?php if (isset($_SESSION['auth_logged_in'])): ?>
+					<th scope='col'>Départ</th>
+					<th scope='col'>Date de départ</th>
+					<th scope='col'>Heure de départ</th>
+					<th scope='col'>Destination</th>
+					<th scope='col'>Date d'arrivée</th>
+					<th scope='col'>Heure d'arrivée</th>
+					<th scope='col'>Places disponibles</th>
+					<th scope='col'><span class='visually-hidden'>Actions</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($trips as $trip): ?>
+					<tr>
+						<td><?= htmlspecialchars($trip->departureAgency) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::date($trip->departureDate)) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::time($trip->departureTime)) ?></td>
+						<td><?= htmlspecialchars($trip->destination) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::date($trip->arrivalDate)) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::time($trip->arrivalTime)) ?></td>
+						<td><?= htmlspecialchars((string) $trip->availableSeats) ?></td>
 						<td>
 							<button type='button' class='btn btn-secondary' data-bs-toggle='modal' data-bs-target='#tripDetailsModal' data-trip-id='<?= (int) $trip->id ?>' aria-label='Afficher les informations du trajet'>
 								<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-eye' viewBox='0 0 16 16'>
@@ -49,33 +48,62 @@ use App\DateTimeFormatter; ?>
 								</a>
 								<a class='btn btn-danger' href='/trips/delete/<?= (int) $trip->id ?>' role='button' aria-label='Supprimer le trajet' onclick='return confirm("Supprimer définitivement ce trajet ?")'>
 									<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash3' viewBox='0 0 16 16'>
-										<path d='M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5' />
+										<path d='M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 0 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5' />
 									</svg>
 								</a>
 							<?php endif; ?>
 						</td>
-					<?php endif; ?>
-				</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
-	<div class='modal fade' id='tripDetailsModal' tabindex='-1' aria-labelledby='tripDetailsModalTitle' aria-hidden='true'>
-		<div class='modal-dialog'>
-			<div class='modal-content'>
-				<div class='modal-header'>
-					<h2 class='modal-title fs-5' id='tripDetailsModalTitle'>Informations du trajet</h2>
-					<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Fermer'></button>
-				</div>
-				<div class='modal-body text-start'>
-					<p>Auteur : <strong id='tripAuthor'></strong></p>
-					<p>Téléphone : <strong id='tripPhone'></strong></p>
-					<p>Email : <strong id='tripEmail'></strong></p>
-					<p>Places disponibles : <strong id='tripAvailableSeats'></strong></p>
-				</div>
-				<div class='modal-footer'>
-					<button type='button' class='btn btn-dark' data-bs-dismiss='modal'>Fermer</button>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<div class='modal fade' id='tripDetailsModal' tabindex='-1' aria-labelledby='tripDetailsModalTitle' aria-hidden='true'>
+			<div class='modal-dialog'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<h2 class='modal-title fs-5' id='tripDetailsModalTitle'>Informations du trajet</h2>
+						<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Fermer'></button>
+					</div>
+					<div class='modal-body text-start'>
+						<p>Auteur : <strong id='tripAuthor'></strong></p>
+						<p>Téléphone : <strong id='tripPhone'></strong></p>
+						<p>Email : <strong id='tripEmail'></strong></p>
+						<p>Places disponibles : <strong id='tripAvailableSeats'></strong></p>
+					</div>
+					<div class='modal-footer'>
+						<button type='button' class='btn btn-dark' data-bs-dismiss='modal'>Fermer</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	<?php else: ?>
+		<!-- VISITOR -->
+		<h1>Pour plus d'informations sur un trajet, veuillez vous connecter</h1>
+		<table class='table table-striped table-bordered text-center rounded'>
+			<thead class='table-dark'>
+				<tr>
+					<th scope='col'>Départ</th>
+					<th scope='col'>Date de départ</th>
+					<th scope='col'>Heure de départ</th>
+					<th scope='col'>Destination</th>
+					<th scope='col'>Date d'arrivée</th>
+					<th scope='col'>Heure d'arrivée</th>
+					<th scope='col'>Places disponibles</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($trips as $trip): ?>
+					<tr>
+						<td><?= htmlspecialchars($trip->departureAgency) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::date($trip->departureDate)) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::time($trip->departureTime)) ?></td>
+						<td><?= htmlspecialchars($trip->destination) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::date($trip->arrivalDate)) ?></td>
+						<td><?= htmlspecialchars(DateTimeFormatter::time($trip->arrivalTime)) ?></td>
+						<td><?= htmlspecialchars((string) $trip->availableSeats) ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
 </div>

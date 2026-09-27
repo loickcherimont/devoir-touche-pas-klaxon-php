@@ -23,6 +23,7 @@
             "php -S localhost:8080 -t public public/index.php",
             "Composer\\Config::disableProcessTimeout"
         ],
+        "lint": "find App Core Router public templates tests -name '*.php' -print0 | xargs -0 -n1 php -l",
         "phpstan": "phpstan analyse",
         "test": "./vendor/bin/phpunit"
     },

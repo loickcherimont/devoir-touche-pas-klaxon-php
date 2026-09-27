@@ -19,7 +19,11 @@ VALUES
 
 -- sample mot_de_passe : [3 first letters of prenom, capitalized][3 first letters of nom, capitalized]@test
 -- ex : Alexandre Martin -> AleMar@test
-INSERT INTO 
+--
+-- Demo / development credentials only: they are committed on purpose so the
+-- project can be run and reviewed out of the box. Never reuse them elsewhere
+-- and never run this seed against a real database.
+INSERT IGNORE INTO
     users (id, nom, prenom, telephone, email, mot_de_passe, role) 
 VALUES
     (1, 'Martin', 'Alexandre', '0612345678', 'alexandre.martin@email.fr', '$2y$10$BTdfxF//cUTfoyddZ5c6Yu94AFephdtRnz6Lanb2HGHI/dteDhzs6', 'user'),
@@ -41,7 +45,9 @@ VALUES
     (17, 'Girard', 'Sarah', '0688665544', 'sarah.girard@email.fr', '$2y$10$0IVlNVoGNUvBeiOW0TwZkuv4c.LkTkq1wlrxBGn/xd5QCG8q0rcqm', 'user'),
     (18, 'Lambert', 'Hugo', '0611223366', 'hugo.lambert@email.fr', '$2y$10$YlHgX67izNH0WBESTBbiH.AxB2UoC5KnJ1xAn0eZYVtv5BXZpQGcy', 'user'),
     (19, 'Masson', 'Julie', '0733445566', 'julie.masson@email.fr', '$2y$10$qfvcLOopmRjPKpM1.RvEBecN7XQwECK07RIPY1b60M.zppT5iSZYa', 'user'),
-    (20, 'Henry', 'Arthur', '0666554433', 'arthur.henry@email.fr', '$2y$10$H2hdua5XS7OywvMCW.3t6.GkOGrR.djTashUHjP5hgbyFNZtg/AxO', 'user');
+    (20, 'Henry', 'Arthur', '0666554433', 'arthur.henry@email.fr', '$2y$10$H2hdua5XS7OywvMCW.3t6.GkOGrR.djTashUHjP5hgbyFNZtg/AxO', 'user'),
+    -- John Doe -> JohDoe@test (the only admin, able to reach /admin)
+    (21, 'John', 'Doe', '0123456789', 'admin@email.fr', '$2y$10$IiyetOnzjuIqhobJo87Xqe.TT0KVUxd6sBs4O/5nieJy4mWCOL/bO', 'admin');
 
 INSERT IGNORE INTO
     trips (id, gdh_depart, gdh_arrivee, places_disponibles, agence_depart_id, agence_arrivee_id, users_id)
