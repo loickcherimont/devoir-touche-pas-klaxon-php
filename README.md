@@ -102,6 +102,7 @@ composer test
 | `AbstractModelTest` | `save()` forwards the SQL and its params to PDO |
 | `TripModelTest` | `saveTrip()` turns a `TripDataDTO` into a correct INSERT |
 | `TripModelTest` | `updateTripById()` turns a `TripDataDTO` into a correct UPDATE |
+| `TripModelTest` | `deleteTripById()` turns the trip id + its owner into a correct DELETE |
 
 ## 🔍 Code Quality
 

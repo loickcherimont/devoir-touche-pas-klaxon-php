@@ -99,6 +99,17 @@ WHERE trips.id = :id
 SQL;
 
     /**
+     * SQL query deleting a trip.
+     * The author condition is part of the query: a user can never delete
+     * a trip owned by somebody else, whatever the id sent in the URL.
+     */
+    private const SQL_DELETE_BY_ID = <<<'SQL'
+DELETE FROM trips
+WHERE id = :id
+  AND users_id = :users_id
+SQL;
+
+    /**
      * Returns the trips to display on the home page.
      *
      * @return array<array<string, mixed>> The trips as associative arrays
@@ -201,6 +212,24 @@ SQL;
             'agence_depart_id' => $tripData->agenceDepartId,
             'agence_arrivee_id' => $tripData->agenceArriveeId,
             'id' => $id,
+        ]);
+    }
+
+    /**
+     * Deletes a trip from the database, but only if it belongs to the given user.
+     *
+     * Both conditions (trip id and author id) are checked by the SQL query
+     * itself, so the deletion happens in a single atomic statement and the
+     * controller never has to load the trip first.
+     *
+     * @param int $id     Id of the trip to delete.
+     * @param int $userId Id of the logged-in user, who must own the trip.
+     */
+    public function deleteTripById(int $id, int $userId): void
+    {
+        $this->save(self::SQL_DELETE_BY_ID, [
+            'id' => $id,
+            'users_id' => $userId,
         ]);
     }
 }
