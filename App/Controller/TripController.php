@@ -17,9 +17,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * TripController
  *
- * Manages the trip features: creation page, update page (restricted to the
- * author of the trip) and the small JSON API used by the details modal.
- * Every action is restricted to logged-in users.
+ * Manages the trip features: creation page, update page and deletion
+ * (both restricted to the author of the trip), plus the small JSON API
+ * used by the details modal. Every action is restricted to logged-in users.
  */
 class TripController extends AbstractController
 {
@@ -184,6 +184,38 @@ class TripController extends AbstractController
 		}
 
 		$this->tripModel->updateTripById($this->buildTripData($request), $id);
+
+		return $this->redirect($response, '/');
+	}
+
+	/**
+	 * Handles the GET /trips/delete/:id action: deletes the trip, but only
+	 * when it belongs to the logged-in user.
+	 *
+	 * The ownership check lives inside the SQL query
+	 * (see TripModel::deleteTripById()), so this action only guards the
+	 * authentication, then calls the model once. A trip that does not exist,
+	 * or that belongs to somebody else, simply redirects to the homepage —
+	 * the same visible outcome as an unauthorized update.
+	 *
+	 * Note: a destructive action reachable with a plain GET can also be
+	 * triggered by a link prefetch or a third-party page. A POST route plus
+	 * a CSRF token would be the safe production version.
+	 *
+	 * @param Request  $request  Incoming HTTP request (unused for now).
+	 * @param Response $response Outgoing HTTP response to redirect.
+	 * @param int      $id       Trip identifier from the URL.
+	 * @return Response The redirect response, or a redirect to /login.
+	 */
+	public function delete(Request $request, Response $response, int $id): Response
+	{
+		$redirect = $this->redirectAnonymousVisitor($response);
+
+		if ($redirect !== null) {
+			return $redirect;
+		}
+
+		$this->tripModel->deleteTripById($id, (int) $this->currentUserId());
 
 		return $this->redirect($response, '/');
 	}

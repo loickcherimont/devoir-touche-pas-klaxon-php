@@ -7,7 +7,7 @@
     "build": "npm run sass && npm run js",
     "sass": "sass --load-path=node_modules assets/scss/index.scss:public/styles/index.css",
     "sass:watch": "sass --watch --load-path=node_modules assets/scss/index.scss:public/styles/index.css",
-    "js": "mkdir -p public/js && cp assets/js/trip.js public/js/trip.js && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js public/js/bootstrap.bundle.min.js",
+    "js": "mkdir -p public/js && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js public/js/bootstrap.bundle.min.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

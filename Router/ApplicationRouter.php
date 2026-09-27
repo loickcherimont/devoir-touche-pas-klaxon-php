@@ -41,6 +41,9 @@ final class ApplicationRouter
         $this->router->get('/trips/new', 'TripController@index');
         $this->router->get('/api/trips/:id', 'TripController@findDetailsById');
         $this->router->get('/trips/update/:id', 'TripController@getUpdatePage');
+        // Destructive action kept on GET: the ownership check is server-side,
+        // but a POST route + CSRF token would be the safe production version.
+        $this->router->get('/trips/delete/:id', 'TripController@delete');
 
         $this->router->post('/login', 'LoginController@login');
         $this->router->post('/trips/new', 'TripController@create');

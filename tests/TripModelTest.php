@@ -111,6 +111,33 @@ class TripModelTest extends TestCase
 	}
 
 	/**
+	 * The trip id is paired with its owner id: the SQL query only deletes the
+	 * row when both match, so a user cannot delete somebody else's trip.
+	 */
+	public function testDeleteTripByIdSendsADeleteToPdoWithTheTripIdAndItsOwnerId(): void
+	{
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('DELETE FROM trips'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->with([
+				'id' => self::TRIP_ID,
+				'users_id' => self::USER_ID,
+			])
+			->willReturn(true);
+
+		$model = new TripModel($pdo);
+
+		$model->deleteTripById(self::TRIP_ID, self::USER_ID);
+	}
+
+	/**
 	 * Builds the trip submitted by the create and update forms,
 	 * shared by the two write tests.
 	 *
