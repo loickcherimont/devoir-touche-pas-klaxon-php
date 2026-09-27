@@ -87,6 +87,40 @@ Example for the first user, **Alexandre Martin** → `AleMar@test`.
 
 Any other user in `Core/data.sql` follows the same rule.
 
+### Administrator account
+
+The seed also ships **one admin** account, the only one allowed to reach the
+dashboard at `/admin`. It follows the exact same password convention:
+
+| Email | Password | Role |
+| --- | --- | --- |
+| `admin@email.fr` | `JohDoe@test` | `admin` |
+
+**John Doe** → `JohDoe@test`, exactly like **Alexandre Martin** → `AleMar@test`.
+
+> [!WARNING]
+> These are **demo / development credentials only**. They are committed on
+> purpose so the project can be run and reviewed out of the box. Never reuse
+> them anywhere else, and never run `Core/data.sql` against a real database.
+
+### How the roles work
+
+`role` is a `VARCHAR` in the database but a real type in the code: the
+`App\Model\User\UserRole` enum lists the two possible values. Nothing else
+writes `'admin'` or `'user'`:
+
+```php
+$role = UserRole::tryFrom((string) $user['role']); // null for an unknown value
+
+if ($role === null) {
+    // Refuse the login: the app never grants an access it cannot name.
+}
+```
+
+Controllers test the role through `AbstractController::hasRole()`, and the
+role is injected in every template as `$userRole`, so a view never reads
+`$_SESSION` by itself.
+
 ## 🧪 Tests
 
 Unit tests cover the **database write operations** (the assignment requirement).
@@ -106,14 +140,40 @@ composer test
 
 ## 🔍 Code Quality
 
-Run PHPStan (static analysis) to **qualify the code before every push or
-production deploy**: it checks the code without executing it, at level **8**,
-and covers `App`, `Core`, `Router`, `public`, `templates` and `tests`.
+### Before every push
+
+Three gates, **all green** before anything reaches the remote:
+
+| Gate | Command | What it checks |
+| --- | --- | --- |
+| Syntax | `composer lint` | every PHP file parses (`php -l`, one file at a time) |
+| Static analysis | `composer phpstan` | level **8** on `App`, `Core`, `Router`, `public`, `templates` and `tests` |
+| Tests | `composer test` | the unit test suite (PDO is mocked, no MySQL needed) |
 
 ```bash
-# Static analysis (level 8)
-composer phpstan
+# All three, in order
+composer lint && composer phpstan && composer test
 ```
+
+PHPStan analyses the code **without executing it** at level **8**, which is
+the strictest level that still does not require a full type system. A clean
+run means every class, method signature and property type is documented and
+consistent.
+
+> [!TIP]
+> `composer lint` is a one-liner over `php -l`; run it on a single file while
+> writing with `php -l path/to/File.php`.
+
+### Coding conventions observed in this project
+
+| Convention | Where |
+| --- | --- |
+| Controllers stay thin: read the request, ask a model, return a `Response` | `App/Controller` |
+| Views only display what a controller gives them, all values escaped with `htmlspecialchars()` | `templates` |
+| No SQL outside models, always prepared statements | `App/Model`, `Core` |
+| Roles and states are enums, never raw strings | `App/Model/User/UserRole.php` |
+| One `return` per branch, braces always present (PSR-12) | everywhere |
+| Access control goes through `AbstractController::hasRole()`, checked at the top of every action | `App/Controller` |
 
 > [!IMPORTANT]  
 > The next parts of this project are currently **in development** and will be added soon.
