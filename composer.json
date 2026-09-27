@@ -4,14 +4,25 @@
     "type": "project",
     "license": "MIT",
     "autoload": {
-        "psr-4": { "App\\": "App/", "Core\\": "Core/", "Router\\": "Router/" },
-        "files": ["bootstrap.php"]
+        "psr-4": {
+            "App\\": "App/",
+            "Core\\": "Core/",
+            "Router\\": "Router/"
+        },
+        "files": [
+            "bootstrap.php"
+        ]
     },
     "autoload-dev": {
-        "psr-4": { "Tests\\": "tests/"}
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
-        "dev": "php -S localhost:8080 -t public public/index.php",
+        "dev": [
+            "php -S localhost:8080 -t public public/index.php",
+            "Composer\\Config::disableProcessTimeout"
+        ],
         "phpstan": "phpstan analyse",
         "test": "./vendor/bin/phpunit"
     },

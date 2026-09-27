@@ -100,7 +100,8 @@ composer test
 | Test | Covers |
 | --- | --- |
 | `AbstractModelTest` | `save()` forwards the SQL and its params to PDO |
-| `TripModelTest` | `saveTrip()` turns a `TripDTO` into a correct INSERT |
+| `TripModelTest` | `saveTrip()` turns a `TripDataDTO` into a correct INSERT |
+| `TripModelTest` | `updateTripById()` turns a `TripDataDTO` into a correct UPDATE |
 
 ## 🔍 Code Quality
 

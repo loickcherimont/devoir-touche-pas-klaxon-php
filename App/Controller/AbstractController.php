@@ -30,16 +30,22 @@ abstract class AbstractController
     }
 
     /**
-     * Turns a response into an HTTP redirect (302 Found) to the given URL.
+     * Turns a response into an HTTP redirect to the given URL.
      *
-     * @param Response $response The HTTP response to turn into a redirect.
-     * @param string   $url      The destination URL (ex: '/').
+     * @param Response $response   The HTTP response to turn into a redirect.
+     * @param string   $url        The destination URL (ex: '/').
+     * @param int      $statusCode The HTTP status code of the redirect
+     *                              (ex: Response::HTTP_FOUND for a 302).
      * @return Response The redirect response.
      */
-    protected function redirect(Response $response, string $url): Response
-    {
+    protected function redirect(
+        Response $response,
+        string $url,
+        int $statusCode = Response::HTTP_FOUND
+    ): Response {
         $response->headers->set('Location', $url);
-        return $response->setStatusCode(Response::HTTP_FOUND);
+
+        return $response->setStatusCode($statusCode);
     }
 
     /**
@@ -64,5 +70,19 @@ abstract class AbstractController
     protected function isLoggedIn(): bool
     {
         return isset($_SESSION['auth_logged_in']);
+    }
+
+    /**
+     * Returns the id of the logged-in user, or null when nobody is logged in.
+     *
+     * The session stores the raw value coming from the database, which is a
+     * string with the default MySQL PDO settings. It is cast to int here, once
+     * and for all, so ids can be compared safely with "===" anywhere else.
+     *
+     * @return int|null The user id, or null when nobody is logged in.
+     */
+    protected function currentUserId(): ?int
+    {
+        return isset($_SESSION['auth_user_id']) ? (int) $_SESSION['auth_user_id'] : null;
     }
 }
