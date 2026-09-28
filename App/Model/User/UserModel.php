@@ -25,12 +25,14 @@ class UserModel extends AbstractModel
         SELECT * FROM users WHERE id = :id
         SQL;
     /**
-     * SQL query listing the non-admin users for the read-only admin dashboard.
+     * SQL query listing the non-admin users for the read-only admin dashboard,
+     * ordered by natural id so the rows follow the insertion order.
      */
     private const SQL_FIND_ALL_NON_ADMIN_USERS = <<<'SQL'
         SELECT id, nom, prenom, email, role
         FROM users
         WHERE role != :excluded_role
+        ORDER BY id
         SQL;
     /**
      * Returns the first user matching the given email address.

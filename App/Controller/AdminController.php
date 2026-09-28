@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Model\Agency\AgencyModel;
 use App\Model\User\UserModel;
 use App\Model\User\UserRole;
 use Core\Database;
@@ -18,10 +19,12 @@ use Symfony\Component\HttpFoundation\Response;
 class AdminController extends AbstractController
 {
 	private UserModel $userModel;
+	private AgencyModel $agencyModel;
 
 	public function __construct()
 	{
 		$this->userModel = new UserModel(Database::getInstance()->connection());
+		$this->agencyModel = new AgencyModel(Database::getInstance()->connection());
 	}
 
 	/**
@@ -40,6 +43,9 @@ class AdminController extends AbstractController
 			return $this->redirect($response, '/login', Response::HTTP_FOUND);
 		}
 
-		return $this->render('dashboard', ['users' => $this->userModel->getAllNonAdminUsers()]);
+		return $this->render('dashboard', [
+			'users' => $this->userModel->getAllNonAdminUsers(),
+			'agencies' => $this->agencyModel->getAllAgenciesForAdmin(),
+		]);
 	}
 }

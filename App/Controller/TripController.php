@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\DateTimeFormatter;
-use App\Model\AgencyModel;
+use App\Model\Agency\AgencyModel;
 use App\Model\Trip\TripDataDTO;
 use App\Model\Trip\TripModel;
 use App\Model\Trip\TripToUpdateDetailsDTO;
