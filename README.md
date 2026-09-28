@@ -180,4 +180,7 @@ consistent.
 
 ## 🔑 License
 
-<div align="center">Copyright © 2026 | Loick CHERIMONT | All Rights Reserved.</div>
+<div align="center">MIT License — Copyright © 2026 Loïck CHERIMONT.</div>
+
+This project is distributed under the terms of the MIT License. See the
+[`LICENSE`](LICENSE) file for the full text.

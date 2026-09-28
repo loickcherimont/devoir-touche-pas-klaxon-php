@@ -3,7 +3,6 @@
 namespace App\Model\User;
 
 use Core\AbstractModel;
-use PDO;
 
 /**
  * UserModel
@@ -18,6 +17,20 @@ class UserModel extends AbstractModel
      */
     private const SQL_FIND_USER_BY_EMAIL = <<<'SQL'
         SELECT * FROM users WHERE email = :email
+        SQL;
+    /**
+     * SQL query to find a specific user using its id.
+     */
+    private const SQL_FIND_USER_BY_ID = <<<'SQL'
+        SELECT * FROM users WHERE id = :id
+        SQL;
+    /**
+     * SQL query listing the non-admin users for the read-only admin dashboard.
+     */
+    private const SQL_FIND_ALL_NON_ADMIN_USERS = <<<'SQL'
+        SELECT id, nom, prenom, email, role
+        FROM users
+        WHERE role != :excluded_role
         SQL;
     /**
      * Returns the first user matching the given email address.
@@ -38,6 +51,24 @@ class UserModel extends AbstractModel
      */
     public function getUserById(int $id): array|false
     {
-        return $this->findOne('SELECT * FROM users WHERE id = :id', ['id' => $id]);
+        return $this->findOne(self::SQL_FIND_USER_BY_ID, ['id' => $id]);
+    }
+
+    /**
+     * Returns every non-admin user, for the read-only admin listing.
+     *
+     * @return array<AdminUserDTO> The non-admin users as readonly DTOs, ready for the dashboard
+     */
+    public function getAllNonAdminUsers(): array
+    {
+        $rows = $this->findAll(self::SQL_FIND_ALL_NON_ADMIN_USERS, ['excluded_role' => UserRole::Admin->value]);
+
+        return array_map(fn(array $row): AdminUserDTO => new AdminUserDTO(
+            id: $row['id'],
+            prenom: $row['prenom'],
+            nom: $row['nom'],
+            email: $row['email'],
+            role: UserRole::tryFrom((string) $row['role'])
+        ), $rows);
     }
 }
