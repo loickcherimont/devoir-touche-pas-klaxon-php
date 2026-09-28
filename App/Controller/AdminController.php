@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Model\User\UserModel;
 use App\Model\User\UserRole;
+use Core\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,6 +17,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminController extends AbstractController
 {
+	private UserModel $userModel;
+
+	public function __construct()
+	{
+		$this->userModel = new UserModel(Database::getInstance()->connection());
+	}
+
 	/**
 	 * Renders the admin dashboard.
 	 *
@@ -31,6 +40,6 @@ class AdminController extends AbstractController
 			return $this->redirect($response, '/login', Response::HTTP_FOUND);
 		}
 
-		return $this->render('dashboard');
+		return $this->render('dashboard', ['users' => $this->userModel->getAllNonAdminUsers()]);
 	}
 }
