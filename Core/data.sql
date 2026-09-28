@@ -47,7 +47,7 @@ VALUES
     (19, 'Masson', 'Julie', '0733445566', 'julie.masson@email.fr', '$2y$10$qfvcLOopmRjPKpM1.RvEBecN7XQwECK07RIPY1b60M.zppT5iSZYa', 'user'),
     (20, 'Henry', 'Arthur', '0666554433', 'arthur.henry@email.fr', '$2y$10$H2hdua5XS7OywvMCW.3t6.GkOGrR.djTashUHjP5hgbyFNZtg/AxO', 'user'),
     -- John Doe -> JohDoe@test (the only admin, able to reach /admin)
-    (21, 'John', 'Doe', '0123456789', 'admin@email.fr', '$2y$10$IiyetOnzjuIqhobJo87Xqe.TT0KVUxd6sBs4O/5nieJy4mWCOL/bO', 'admin');
+    (21, 'Doe', 'John', '0123456789', 'admin@email.fr', '$2y$10$IiyetOnzjuIqhobJo87Xqe.TT0KVUxd6sBs4O/5nieJy4mWCOL/bO', 'admin');
 
 INSERT IGNORE INTO
     trips (id, gdh_depart, gdh_arrivee, places_disponibles, agence_depart_id, agence_arrivee_id, users_id)
