@@ -7,7 +7,7 @@
 **Backend:**
 
 - **PHP 8** — Server-side language
-- **Composer** — Dependency management & autoloading (`Loick\DevoirTouchePasKlaxonPhp`)
+- **Composer** — Dependency management & autoloading (`App\`)
 - **izniburak/router 3.1** — Routing/PHP router ([github.com/izniburak/router](https://github.com/izniburak/router))
 - **PHPUnit** — Unit testing ([phpunit.de](https://phpunit.de))
 - **PHPStan** — Static analysis ([phpstan.org](https://phpstan.org))
