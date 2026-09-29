@@ -33,6 +33,27 @@ WHERE trips.places_disponibles > 0
   AND trips.gdh_depart > NOW()
 ORDER BY depart;
 SQL;
+    /**
+     * SQL query selecting trips,
+     * joined with their departure and arrival agencies and their owner.
+     */
+    private const SQL_FIND_ALL_TRIPS_FOR_ADMIN = <<<'SQL'
+SELECT
+    trips.id,
+    CONCAT(users.prenom, ' ', users.nom) AS proprietaire,
+    a_depart.nom AS depart,
+    DATE(trips.gdh_depart) AS date_depart,
+    TIME(trips.gdh_depart) AS heure_depart,
+    a_arrivee.nom AS destination,
+    DATE(trips.gdh_arrivee) AS date_arrivee,
+    TIME(trips.gdh_arrivee) AS heure_arrivee,
+    trips.places_disponibles
+FROM trips
+JOIN agencies AS a_depart ON trips.agence_depart_id = a_depart.id
+JOIN agencies AS a_arrivee ON trips.agence_arrivee_id = a_arrivee.id
+JOIN users ON trips.users_id = users.id
+ORDER BY trips.id
+SQL;
 
     /**
      * SQL query inserting a new trip.
@@ -117,6 +138,28 @@ SQL;
     public function getTrips(): array
     {
         return $this->findAll(self::SQL_DEFAULT_DISPLAY);
+    }
+
+    /**
+     * Returns the trips to display on the admin dashboard.
+     *
+     * @return array<AdminTripDTO> The trips as readonly DTOs
+     */
+    public function getAllTripsForAdmin(): array
+    {
+        $rows = $this->findAll(self::SQL_FIND_ALL_TRIPS_FOR_ADMIN);
+
+        return array_map(fn (array $row): AdminTripDTO => new AdminTripDTO(
+            id: (int) $row['id'],
+            owner: (string) $row['proprietaire'],
+            departureAgency: (string) $row['depart'],
+            departureDate: (string) $row['date_depart'],
+            departureTime: (string) $row['heure_depart'],
+            arrivalAgency: (string) $row['destination'],
+            arrivalDate: (string) $row['date_arrivee'],
+            arrivalTime: (string) $row['heure_arrivee'],
+            availableSeats: (int) $row['places_disponibles'],
+        ), $rows);
     }
 
     /**

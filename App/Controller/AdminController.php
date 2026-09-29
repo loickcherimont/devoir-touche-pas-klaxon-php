@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Model\Agency\AgencyModel;
+use App\Model\Trip\TripModel;
 use App\Model\User\UserModel;
 use App\Model\User\UserRole;
 use Core\Database;
@@ -21,11 +22,13 @@ class AdminController extends AbstractController
 {
 	private UserModel $userModel;
 	private AgencyModel $agencyModel;
+	private TripModel $tripModel;
 
 	public function __construct()
 	{
 		$this->userModel = new UserModel(Database::getInstance()->connection());
 		$this->agencyModel = new AgencyModel(Database::getInstance()->connection());
+		$this->tripModel = new TripModel(Database::getInstance()->connection());
 	}
 
 	/**
@@ -141,6 +144,7 @@ class AdminController extends AbstractController
 		return $this->render('dashboard', [
 			'users' => $this->userModel->getAllNonAdminUsers(),
 			'agencies' => $this->agencyModel->getAllAgencies(),
+			'trips' => $this->tripModel->getAllTripsForAdmin(),
 			'error' => $error,
 			'success' => $success
 		]);
