@@ -45,6 +45,9 @@ final class ApplicationRouter
         // but a POST route + CSRF token would be the safe production version.
         $this->router->get('/trips/delete/:id', 'TripController@delete');
         $this->router->get('/admin', 'AdminController@index');
+        // POST route without CSRF token, consistent with the other POST routes:
+        // the CSRF debt is documented and must be fixed for all routes at once.
+        $this->router->post('/admin/agencies/new', 'AdminController@createAgency');
 
         $this->router->post('/login', 'LoginController@login');
         $this->router->post('/trips/new', 'TripController@create');

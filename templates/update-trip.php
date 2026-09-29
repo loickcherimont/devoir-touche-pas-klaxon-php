@@ -4,7 +4,7 @@
  * Variables provided by TripController::renderUpdateTrip().
  *
  * @var \App\Model\Trip\TripToUpdateDetailsDTO $trip
- * @var array<array<string, mixed>>             $agencies
+ * @var array<\App\Model\Agency\AdminAgencyDTO> $agencies
  * @var string|null                            $error
  */
 $agencies = $agencies ?? [];
@@ -53,8 +53,8 @@ $error = $error ?? null;
 				<select class='form-select' id='tripDepart' name='depart_id' required>
 					<option value=''>Choisir une agence</option>
 					<?php foreach ($agencies as $agency): ?>
-						<option value='<?= (int) $agency['id'] ?>'<?= (int) $agency['id'] === $trip->departureAgencyId ? ' selected' : '' ?>>
-							<?= htmlspecialchars((string) $agency['nom']) ?>
+						<option value='<?= $agency->id ?>'<?= $agency->id === $trip->departureAgencyId ? ' selected' : '' ?>>
+							<?= htmlspecialchars($agency->nom) ?>
 						</option>
 					<?php endforeach; ?>
 				</select>
@@ -66,8 +66,8 @@ $error = $error ?? null;
 				<select class='form-select' id='tripDestination' name='destination_id' required>
 					<option value=''>Choisir une agence</option>
 					<?php foreach ($agencies as $agency): ?>
-						<option value='<?= (int) $agency['id'] ?>'<?= (int) $agency['id'] === $trip->destinationAgencyId ? ' selected' : '' ?>>
-							<?= htmlspecialchars((string) $agency['nom']) ?>
+						<option value='<?= $agency->id ?>'<?= $agency->id === $trip->destinationAgencyId ? ' selected' : '' ?>>
+							<?= htmlspecialchars($agency->nom) ?>
 						</option>
 					<?php endforeach; ?>
 				</select>

@@ -44,7 +44,7 @@ $agencies = $agencies ?? [];
 				<select class='form-select' id='tripDepart' name='depart_id' required>
 					<option selected value=''>Choisir une agence</option>
 					<?php foreach ($agencies as $agency): ?>
-						<option value='<?= $agency['id'] ?>'><?= $agency['nom'] ?></option>
+						<option value='<?= $agency->id ?>'><?= htmlspecialchars($agency->nom) ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
@@ -55,7 +55,7 @@ $agencies = $agencies ?? [];
 				<select class='form-select' id='tripDestination' name='destination_id' required>
 					<option selected value=''>Choisir une agence</option>
 					<?php foreach ($agencies as $agency): ?>
-						<option value='<?= $agency['id'] ?>'><?= $agency['nom'] ?></option>
+						<option value='<?= $agency->id ?>'><?= htmlspecialchars($agency->nom) ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
