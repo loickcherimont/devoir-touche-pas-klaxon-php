@@ -6,7 +6,7 @@ USE touche_pas_au_klaxon;
 -- Schemas
 CREATE TABLE IF NOT EXISTS agencies (
     id INT UNSIGNED AUTO_INCREMENT,
-    nom VARCHAR(50) NOT NULL,
+    nom VARCHAR(50) NOT NULL UNIQUE,
     PRIMARY KEY(id)
 );
 

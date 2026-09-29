@@ -20,24 +20,32 @@ class AgencyModel extends AbstractModel
         FROM agencies
         ORDER BY id
         SQL;
-
     /**
-     * Returns every agency from the database.
-     *
-     * @return array<array<string, mixed>> All agencies as associative arrays
+     * SQL query finding one agency by its name. The utf8mb4 collation makes
+     * the comparison case-insensitive, so "Bordeaux" and "bordeaux" collide
+     * naturally through this query.
      */
-    public function getAllAgencies(): array
-    {
-        return $this->findAll('SELECT * FROM agencies');
-    }
+    private const SQL_FIND_AGENCY_BY_NOM = <<<'SQL'
+        SELECT id, nom
+        FROM agencies
+        WHERE nom = :nom
+        SQL;
+    /**
+     * SQL query inserting a new agency. The caller must ensure the name does
+     * not already exist: the database has no UNIQUE constraint on agencies.nom.
+     */
+    private const SQL_INSERT_AGENCY = <<<'SQL'
+        INSERT INTO agencies (nom)
+        VALUES (:nom)
+        SQL;
 
     /**
-     * Returns every agency, mapped to immutable DTOs for the read-only admin
-     * dashboard listing. Never used for any write operation.
+     * Returns every agency, mapped to immutable DTOs. Shared by the trip
+     * creation and update forms and by the admin dashboard.
      *
      * @return array<AdminAgencyDTO> All agencies as readonly DTOs
      */
-    public function getAllAgenciesForAdmin(): array
+    public function getAllAgencies(): array
     {
         $rows = $this->findAll(self::SQL_FIND_ALL_AGENCIES);
 
@@ -45,5 +53,27 @@ class AgencyModel extends AbstractModel
             id: $row['id'],
             nom: $row['nom']
         ), $rows);
+    }
+
+    /**
+     * Returns the first agency matching the given name, or false when none
+     * does. Used to reject duplicate names before the insert.
+     *
+     * @param string $nom The agency name to look up
+     * @return array<string, mixed>|false The matching agency as an associative array, or false when no agency matches
+     */
+    public function getAgencyByNom(string $nom): array|false
+    {
+        return $this->findOne(self::SQL_FIND_AGENCY_BY_NOM, ['nom' => $nom]);
+    }
+
+    /**
+     * Inserts a new agency.
+     *
+     * @param string $nom The name of the agency to create
+     */
+    public function saveAgency(string $nom): void
+    {
+        $this->save(self::SQL_INSERT_AGENCY, ['nom' => $nom]);
     }
 }
