@@ -12,8 +12,9 @@ use Core\AbstractModel;
 class AgencyModel extends AbstractModel
 {
     /**
-     * SQL query listing the agencies for the read-only admin dashboard, ordered
-     * by natural id so the rows follow the insertion order.
+     * SQL query listing every agency, shared by the admin dashboard and by the
+     * trip creation and update forms, ordered by natural id so the rows follow
+     * the insertion order.
      */
     private const SQL_FIND_ALL_AGENCIES = <<<'SQL'
         SELECT id, nom
@@ -31,12 +32,22 @@ class AgencyModel extends AbstractModel
         WHERE nom = :nom
         SQL;
     /**
-     * SQL query inserting a new agency. The caller must ensure the name does
-     * not already exist: the database has no UNIQUE constraint on agencies.nom.
+     * SQL query inserting a new agency. The UNIQUE constraint on agencies.nom
+     * backs the caller-side duplicate check: a concurrent insert that slips
+     * through the lookup would fail here instead of duplicating the row.
      */
     private const SQL_INSERT_AGENCY = <<<'SQL'
         INSERT INTO agencies (nom)
         VALUES (:nom)
+        SQL;
+    /**
+     * SQL query deleting one agency. The database forbids deleting an agency
+     * still referenced by a trip (FOREIGN KEY, ON DELETE RESTRICT): the caller
+     * catches the resulting integrity-constraint violation.
+     */
+    private const SQL_DELETE_AGENCY = <<<'SQL'
+        DELETE FROM agencies
+        WHERE id = :id
         SQL;
 
     /**
@@ -56,15 +67,20 @@ class AgencyModel extends AbstractModel
     }
 
     /**
-     * Returns the first agency matching the given name, or false when none
-     * does. Used to reject duplicate names before the insert.
+     * Returns the agency matching the given name, or null when none does. Used
+     * to reject duplicate names before the insert, whatever the case variant:
+     * the utf8mb4 collation makes the comparison case-insensitive naturally.
      *
      * @param string $nom The agency name to look up
-     * @return array<string, mixed>|false The matching agency as an associative array, or false when no agency matches
+     * @return AdminAgencyDTO|null The matching agency, or null when none matches
      */
-    public function getAgencyByNom(string $nom): array|false
+    public function getAgencyByNom(string $nom): ?AdminAgencyDTO
     {
-        return $this->findOne(self::SQL_FIND_AGENCY_BY_NOM, ['nom' => $nom]);
+        $row = $this->findOne(self::SQL_FIND_AGENCY_BY_NOM, ['nom' => $nom]);
+
+        return $row === false
+            ? null
+            : new AdminAgencyDTO(id: $row['id'], nom: $row['nom']);
     }
 
     /**
@@ -75,5 +91,19 @@ class AgencyModel extends AbstractModel
     public function saveAgency(string $nom): void
     {
         $this->save(self::SQL_INSERT_AGENCY, ['nom' => $nom]);
+    }
+
+    /**
+     * Deletes the agency with the given id.
+     *
+     * The deletion is rejected by the foreign key whenever the agency is still
+     * referenced by a trip; the caller catches the violation to display a
+     * readable error instead of an unhandled exception.
+     *
+     * @param int $id Id of the agency to delete
+     */
+    public function deleteAgencyById(int $id): void
+    {
+        $this->save(self::SQL_DELETE_AGENCY, ['id' => $id]);
     }
 }

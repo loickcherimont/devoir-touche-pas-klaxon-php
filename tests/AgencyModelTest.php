@@ -16,6 +16,11 @@ use PHPUnit\Framework\TestCase;
 class AgencyModelTest extends TestCase
 {
 	/**
+	 * @var int The agency id used across the tests
+	 */
+	private const AGENCY_ID = 99;
+
+	/**
 	 * @var string The agency name used across the tests
 	 */
 	private const AGENCY_NAME = 'Clisson';
@@ -37,5 +42,24 @@ class AgencyModelTest extends TestCase
 
 		$model = new AgencyModel($pdo);
 		$model->saveAgency(self::AGENCY_NAME);
+	}
+
+	public function testDeleteAgencyByIdSendsADeleteToPdoWithTheAgencyId(): void
+	{
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('DELETE FROM agencies'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->with(['id' => self::AGENCY_ID])
+			->willReturn(true);
+
+		$model = new AgencyModel($pdo);
+		$model->deleteAgencyById(self::AGENCY_ID);
 	}
 }
