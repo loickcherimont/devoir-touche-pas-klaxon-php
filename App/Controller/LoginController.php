@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Login page controller: renders the login form.
+ * Login page controller: renders the login form, checks the credentials.
  */
 class LoginController extends AbstractController
 {
@@ -47,6 +47,12 @@ class LoginController extends AbstractController
 	 */
 	public function login(Request $request, Response $response): Response
 	{
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/login');
+
+		if ($csrfRedirect !== null) {
+			return $csrfRedirect;
+		}
+
 		$user = $this->userModel->getUserByEmail((string) $request->request->get('email'));
 
 		if ($user !== false && password_verify((string) $request->request->get('pass'), (string) $user['mot_de_passe'])) {

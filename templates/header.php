@@ -13,11 +13,20 @@
 		<?php
 
 		use App\Model\User\UserRole;
+		use App\Security\Flash;
 
 		// $userRole is injected by AbstractController::render() on every page.
 		// It is null for a visitor, and also for a stored role the enum does not
 		// know: both fall back to the visitor navigation below.
-		$userRole = $userRole ?? null; ?>
+		$userRole = $userRole ?? null;
+
+		// Flash messages set by the previous POST (PRG pattern), shown once.
+		foreach (Flash::all() as $type => $message): ?>
+			<div class='alert alert-<?= htmlspecialchars($type) ?>' role='alert'>
+				<?= htmlspecialchars((string) $message) ?>
+			</div>
+		<?php endforeach;
+		Flash::clear(); ?>
 		<?php if ($userRole === UserRole::Admin): ?>
 			<nav class='navbar navbar-expand-lg bg-body-tertiary border border-3 rounded mt-3'>
 				<div class='container-fluid'>

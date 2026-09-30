@@ -14,6 +14,7 @@ $error = $error ?? null;
 	<a class='btn btn-outline-secondary' href='/' role='button'>Retour à l'accueil</a>
 	<h1>Modifier mon trajet</h1>
 	<form action='/trips/update/<?= (int) $trip->id ?>' method='POST'>
+		<input type='hidden' name='csrf_token' value='<?= \App\Security\Csrf::token() ?>'>
 		<?php if (isset($error)): ?>
 			<div class="alert alert-danger" role="alert">
 				<?= htmlspecialchars($error) ?>
