@@ -51,8 +51,8 @@ composer install
 No migration tool: create the base and load the seed, in this order.
 
 ```bash
-mysql -u root < Core/schema.sql                        # creates the 3 tables
-mysql -u root touche_pas_au_klaxon < Core/data.sql     # data.sql has no USE
+mysql -u [DB_USERNAME] < Core/schema.sql                        # creates the 3 tables
+mysql -u [DB_USERNAME] touche_pas_au_klaxon < Core/data.sql     # data.sql has no USE
 ```
 
 `Core/data.sql` is re-runnable (`INSERT IGNORE`): **12 agencies**, **21 users**,
