@@ -5,6 +5,7 @@
 </div>
 
 <script src='/js/TripDetailsModal.js'></script>
+<script src='/js/AgencyModal.js'></script>
 <!-- To use modals features -->
 <script src='/js/bootstrap.bundle.min.js'></script>
 </body>

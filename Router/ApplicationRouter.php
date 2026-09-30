@@ -40,14 +40,16 @@ final class ApplicationRouter
         $this->router->get('/login', 'LoginController@index');
         $this->router->get('/trips/new', 'TripController@index');
         $this->router->get('/api/trips/:id', 'TripController@findDetailsById');
+        $this->router->get('/api/agencies/:id', 'AdminController@findAgencyById');
         $this->router->get('/trips/update/:id', 'TripController@getUpdatePage');
         // Destructive action kept on GET: the ownership check is server-side,
         // but a POST route + CSRF token would be the safe production version.
         $this->router->get('/trips/delete/:id', 'TripController@delete');
         $this->router->get('/admin', 'AdminController@index');
-        // POST route without CSRF token, consistent with the other POST routes:
+        // POST routes without CSRF token, consistent with the other POST routes:
         // the CSRF debt is documented and must be fixed for all routes at once.
         $this->router->post('/admin/agencies/new', 'AdminController@createAgency');
+        $this->router->post('/admin/agencies/update', 'AdminController@updateAgency');
         // Destructive action kept on GET like /trips/delete/:id: same documented
         // debt (a POST route + CSRF token would be the safe production version).
         $this->router->get('/admin/agencies/delete/:id', 'AdminController@deleteAgency');

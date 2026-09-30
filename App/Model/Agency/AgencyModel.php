@@ -21,6 +21,7 @@ class AgencyModel extends AbstractModel
         FROM agencies
         ORDER BY id
         SQL;
+
     /**
      * SQL query finding one agency by its name. The utf8mb4 collation makes
      * the comparison case-insensitive, so "Bordeaux" and "bordeaux" collide
@@ -31,6 +32,16 @@ class AgencyModel extends AbstractModel
         FROM agencies
         WHERE nom = :nom
         SQL;
+
+    /**
+     * SQL query finding one agency by its id.
+     */
+    private const SQL_FIND_AGENCY_BY_ID = <<<'SQL'
+        SELECT id, nom
+        FROM agencies
+        WHERE id = :id
+        SQL;
+
     /**
      * SQL query inserting a new agency. The UNIQUE constraint on agencies.nom
      * backs the caller-side duplicate check: a concurrent insert that slips
@@ -40,6 +51,16 @@ class AgencyModel extends AbstractModel
         INSERT INTO agencies (nom)
         VALUES (:nom)
         SQL;
+
+    /**
+     * SQL query renaming one agency.
+     */
+    private const SQL_UPDATE_AGENCY = <<<'SQL'
+        UPDATE agencies
+        SET nom = :nom
+        WHERE id = :id
+        SQL;
+
     /**
      * SQL query deleting one agency. The database forbids deleting an agency
      * still referenced by a trip (FOREIGN KEY, ON DELETE RESTRICT): the caller
@@ -84,6 +105,21 @@ class AgencyModel extends AbstractModel
     }
 
     /**
+     * Returns the agency matching the given id, or null when none does.
+     *
+     * @param int $id The agency id to look up
+     * @return AdminAgencyDTO|null The matching agency, or null when none matches
+     */
+    public function getAgencyById(int $id): ?AdminAgencyDTO
+    {
+        $row = $this->findOne(self::SQL_FIND_AGENCY_BY_ID, ['id' => $id]);
+
+        return $row === false
+            ? null
+            : new AdminAgencyDTO(id: $row['id'], nom: $row['nom']);
+    }
+
+    /**
      * Inserts a new agency.
      *
      * @param string $nom The name of the agency to create
@@ -91,6 +127,17 @@ class AgencyModel extends AbstractModel
     public function saveAgency(string $nom): void
     {
         $this->save(self::SQL_INSERT_AGENCY, ['nom' => $nom]);
+    }
+
+    /**
+     * Renames the agency with the given id.
+     *
+     * @param string $nom The new agency name
+     * @param int    $id  The id of the agency to update
+     */
+    public function updateAgencyById(string $nom, int $id): void
+    {
+        $this->save(self::SQL_UPDATE_AGENCY, ['nom' => $nom, 'id' => $id]);
     }
 
     /**

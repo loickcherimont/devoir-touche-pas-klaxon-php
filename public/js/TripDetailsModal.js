@@ -54,8 +54,8 @@ class TripDetailsModal {
     }
 }
 
-const modalElement = document.getElementById('tripDetailsModal');
+const tripModalElement = document.getElementById('tripDetailsModal');
 
-if (modalElement !== null) {
-    new TripDetailsModal(modalElement).listen();
+if (tripModalElement !== null) {
+    new TripDetailsModal(tripModalElement).listen();
 }
