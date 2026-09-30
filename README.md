@@ -188,5 +188,3 @@ composer lint && composer phpstan && composer test
 ## 🔑 License
 
 <div align="center">MIT License — Copyright © 2026 Loïck CHERIMONT.</div>
-
-See the [`LICENSE`](LICENSE) file for the full text.
