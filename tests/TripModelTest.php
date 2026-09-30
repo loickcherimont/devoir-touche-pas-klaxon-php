@@ -138,6 +138,29 @@ class TripModelTest extends TestCase
 	}
 
 	/**
+	 * The admin delete drops the owner condition: only the trip id matters.
+	 */
+	public function testDeleteTripByAdminIdSendsADeleteToPdoWithTheTripId(): void
+	{
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('DELETE FROM trips'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->with(['id' => self::TRIP_ID])
+			->willReturn(true);
+
+		$model = new TripModel($pdo);
+
+		$model->deleteTripByAdminId(self::TRIP_ID);
+	}
+
+	/**
 	 * Builds the trip submitted by the create and update forms,
 	 * shared by the two write tests.
 	 *

@@ -53,6 +53,7 @@ final class ApplicationRouter
         // Destructive action kept on GET like /trips/delete/:id: same documented
         // debt (a POST route + CSRF token would be the safe production version).
         $this->router->get('/admin/agencies/delete/:id', 'AdminController@deleteAgency');
+        $this->router->get('/admin/trips/delete/:id', 'AdminController@deleteTrip');
 
         $this->router->post('/login', 'LoginController@login');
         $this->router->post('/trips/new', 'TripController@create');

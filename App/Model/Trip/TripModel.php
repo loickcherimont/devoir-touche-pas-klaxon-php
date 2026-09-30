@@ -131,6 +131,15 @@ WHERE id = :id
 SQL;
 
     /**
+     * SQL query deleting a trip, whatever its owner. Reserved for the admin
+     * dashboard: unlike SQL_DELETE_BY_ID, there is no author condition.
+     */
+    private const SQL_DELETE_BY_ADMIN_ID = <<<'SQL'
+DELETE FROM trips
+WHERE id = :id
+SQL;
+
+    /**
      * Returns the trips to display on the home page.
      *
      * @return array<array<string, mixed>> The trips as associative arrays
@@ -274,5 +283,19 @@ SQL;
             'id' => $id,
             'users_id' => $userId,
         ]);
+    }
+
+    /**
+     * Deletes a trip from the database, whatever its owner.
+     *
+     * Reserved for the admin dashboard: the author condition that protects
+     * regular deletions is deliberately absent, so an admin can remove any
+     * trip.
+     *
+     * @param int $id Id of the trip to delete.
+     */
+    public function deleteTripByAdminId(int $id): void
+    {
+        $this->save(self::SQL_DELETE_BY_ADMIN_ID, ['id' => $id]);
     }
 }
