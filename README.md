@@ -46,18 +46,6 @@ npm run sass:watch
 composer install
 ```
 
-Configuration is read from **environment variables** (`Core/Config::get()` calls
-`getenv()`). There is no dotenv loader: copying `.env.example` to `.env` does
-nothing — the app silently falls back to `localhost:3306`, database
-`touche_pas_au_klaxon`, user `root`, empty password. Export real values before
-starting:
-
-```bash
-DB_HOST=… DB_USER=… DB_PASS=… composer dev
-```
-
-The app runs on [http://localhost:8080](http://localhost:8080).
-
 ### 3. Database
 
 No migration tool: create the base and load the seed, in this order.
@@ -69,6 +57,22 @@ mysql -u root touche_pas_au_klaxon < Core/data.sql     # data.sql has no USE
 
 `Core/data.sql` is re-runnable (`INSERT IGNORE`): **12 agencies**, **21 users**,
 **7 trips**.
+
+### 4. Start the app
+
+The connection settings are read from **environment variables** (`Core/Config::get()`
+calls `getenv()`). No dotenv loader is installed, so `.env.example` is only a
+reference: copy it to `.env` and nothing changes. Pass the variables by hand on
+the command line, they are only set for that run:
+
+```bash
+DB_HOST=[YOUR_DB_HOST] DB_PORT=[YOUR_DB_PORT] DB_NAME=[YOUR_DB_NAME] DB_USER=[YOUR_DB_USER] DB_PASS=[YOUR_DB_PASS] composer dev
+```
+
+Omit them and the app silently falls back to `localhost:3306`, database
+`touche_pas_au_klaxon`, user `root`, empty password.
+
+The app runs on [http://localhost:8080](http://localhost:8080).
 
 ## ▶️ Usage
 

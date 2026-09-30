@@ -98,7 +98,7 @@ class AdminController extends AbstractController
 			return $this->redirect($response, '/login', Response::HTTP_FOUND);
 		}
 
-		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin#agencies');
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin');
 
 		if ($csrfRedirect !== null) {
 			return $csrfRedirect;
@@ -109,24 +109,24 @@ class AdminController extends AbstractController
 		if ($nom === '') {
 			Flash::error('Le nom de l\'agence ne peut pas être vide.');
 
-			return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+			return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 		}
 
 		if ($this->agencyModel->getAgencyByNom($nom) !== null) {
 			Flash::error('Une agence portant ce nom existe déjà.');
 
-			return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+			return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 		}
 
 		try {
 			$this->agencyModel->saveAgency($nom);
 		} catch (PDOException $exception) {
-			return $this->flashAgencyDatabaseError($exception, $response, '/admin#agencies');
+			return $this->flashAgencyDatabaseError($exception, $response, '/admin');
 		}
 
 		Flash::success('Agence créée avec succès.');
 
-		return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+		return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 	}
 
 	/**
@@ -151,7 +151,7 @@ class AdminController extends AbstractController
 			return $this->redirect($response, '/login', Response::HTTP_FOUND);
 		}
 
-		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin#agencies');
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin');
 
 		if ($csrfRedirect !== null) {
 			return $csrfRedirect;
@@ -164,7 +164,7 @@ class AdminController extends AbstractController
 		if ($agencyToUpdate === null) {
 			Flash::error('Agence non enregistrée. Réessayez avec une agence existante.');
 
-			return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+			return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 		}
 
 		$validationError = $this->agencyValidator->validate($nom, $id, $this->agencyModel);
@@ -172,18 +172,18 @@ class AdminController extends AbstractController
 		if ($validationError !== null) {
 			Flash::error($validationError);
 
-			return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+			return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 		}
 
 		try {
 			$this->agencyModel->updateAgencyById($nom, $id);
 		} catch (PDOException $exception) {
-			return $this->flashAgencyDatabaseError($exception, $response, '/admin#agencies');
+			return $this->flashAgencyDatabaseError($exception, $response, '/admin');
 		}
 
 		Flash::success("L'agence a été modifiée avec succès.");
 
-		return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+		return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 	}
 
 	/**
@@ -212,7 +212,7 @@ class AdminController extends AbstractController
 			return $this->redirect($response, '/login', Response::HTTP_FOUND);
 		}
 
-		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin#agencies');
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin');
 
 		if ($csrfRedirect !== null) {
 			return $csrfRedirect;
@@ -227,12 +227,12 @@ class AdminController extends AbstractController
 
 			Flash::error('Cette agence est utilisée par au moins un trajet et ne peut pas être supprimée.');
 
-			return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+			return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 		}
 
 		Flash::success("L'agence a bien été supprimée.");
 
-		return $this->redirect($response, '/admin#agencies', Response::HTTP_FOUND);
+		return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 	}
 
 	/**
@@ -261,7 +261,7 @@ class AdminController extends AbstractController
 			return $this->redirect($response, '/login', Response::HTTP_FOUND);
 		}
 
-		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin#trips');
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/admin');
 
 		if ($csrfRedirect !== null) {
 			return $csrfRedirect;
@@ -274,12 +274,12 @@ class AdminController extends AbstractController
 
 			Flash::error('Une erreur est survenue lors de la suppression du trajet. Veuillez réessayer.');
 
-			return $this->redirect($response, '/admin#trips', Response::HTTP_FOUND);
+			return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 		}
 
 		Flash::success('Le trajet a bien été supprimé.');
 
-		return $this->redirect($response, '/admin#trips', Response::HTTP_FOUND);
+		return $this->redirect($response, '/admin', Response::HTTP_FOUND);
 	}
 
 	/**
