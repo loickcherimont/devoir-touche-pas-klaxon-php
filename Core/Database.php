@@ -7,10 +7,7 @@ use PDOException;
 use RuntimeException;
 
 /**
- * Database
- *
- * Builds the PDO connection once and shares it across the application.
- * Singleton: a single PDO object exists and is reused everywhere.
+ * Singleton PDO connection, built once and shared across the application.
  */
 final class Database
 {

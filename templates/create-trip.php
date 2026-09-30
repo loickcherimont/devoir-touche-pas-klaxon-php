@@ -5,6 +5,7 @@ $agencies = $agencies ?? [];
 	<a class='btn btn-outline-secondary' href='/' role='button'>Retour à l'accueil</a>
 	<h1>Proposer un trajet</h1>
 	<form action='/trips/new' method='POST'>
+		<input type='hidden' name='csrf_token' value='<?= \App\Security\Csrf::token() ?>'>
 		<?php if (isset($error)): ?>
 			<div class="alert alert-danger" role="alert">
 				<?= $error ?>

@@ -1,4 +1,5 @@
 <form action='/login' method='POST'>
+  <input type='hidden' name='csrf_token' value='<?= \App\Security\Csrf::token() ?>'>
   <?php if (isset($error)): ?>
     <div class="alert alert-danger" role="alert">
       <?= $error ?>

@@ -9,8 +9,10 @@ use App\Model\Trip\TripModel;
 use App\Model\Trip\TripToUpdateDetailsDTO;
 use App\Model\User\UserDTO;
 use App\Model\User\UserModel;
+use App\Security\Flash;
+use App\Service\TripValidator;
 use Core\Database;
-use DateTimeImmutable;
+use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,12 +28,14 @@ class TripController extends AbstractController
 	private UserModel $userModel;
 	private AgencyModel $agencyModel;
 	private TripModel $tripModel;
+	private TripValidator $tripValidator;
 
 	public function __construct()
 	{
 		$this->userModel = new UserModel(Database::getInstance()->connection());
 		$this->agencyModel = new AgencyModel(Database::getInstance()->connection());
 		$this->tripModel = new TripModel(Database::getInstance()->connection());
+		$this->tripValidator = new TripValidator();
 	}
 
 	/**
@@ -81,7 +85,7 @@ class TripController extends AbstractController
 
 	/**
 	 * Handles the POST /trips/new form: validates the data, inserts the trip
-	 * in the database, then redirects to the homepage.
+	 * in the database, then redirects to the homepage with a flash message.
 	 *
 	 * @param Request  $request  Incoming HTTP request containing the trip data.
 	 * @param Response $response Outgoing HTTP response to redirect.
@@ -89,20 +93,35 @@ class TripController extends AbstractController
 	 */
 	public function create(Request $request, Response $response): Response
 	{
-		if (!$this->isLoggedIn()) {
-			return $this->redirect($response, '/login');
+		$redirect = $this->redirectAnonymousVisitor($response);
+
+		if ($redirect !== null) {
+			return $redirect;
 		}
 
-		$error = $this->validateAgencies($request)
-			?? $this->validateDatesTimes($request);
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/trips/new');
+
+		if ($csrfRedirect !== null) {
+			return $csrfRedirect;
+		}
+
+		$error = $this->tripValidator->validate($request);
 
 		if ($error !== null) {
 			return $this->renderCreateTrip($response, $error);
 		}
 
-		$tripData = $this->buildTripData($request);
+		try {
+			$this->tripModel->saveTrip($this->buildTripData($request), (int) $this->currentUserId());
+		} catch (PDOException $exception) {
+			error_log($exception->getMessage());
 
-		$this->tripModel->saveTrip($tripData, (int) $this->currentUserId());
+			Flash::error('Une erreur est survenue lors de la création du trajet. Veuillez réessayer.');
+
+			return $this->redirect($response, '/');
+		}
+
+		Flash::success('Votre trajet a bien été créé.');
 
 		return $this->redirect($response, '/');
 	}
@@ -172,35 +191,43 @@ class TripController extends AbstractController
 			return $this->redirect($response, '/');
 		}
 
-		$error = $this->validateAgencies($request)
-			?? $this->validateDatesTimes($request);
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/trips/update/' . $id);
 
-		if ($error !== null) {
-			return $this->renderUpdateTrip(
-				$response,
-				$tripToUpdate,
-				"Une erreur s'est produite durant la mise à jour du trajet. Veuillez réessayer."
-			);
+		if ($csrfRedirect !== null) {
+			return $csrfRedirect;
 		}
 
-		$this->tripModel->updateTripById($this->buildTripData($request), $id);
+		$error = $this->tripValidator->validate($request);
+
+		if ($error !== null) {
+			return $this->renderUpdateTrip($response, $tripToUpdate, $error);
+		}
+
+		try {
+			$this->tripModel->updateTripById($this->buildTripData($request), $id);
+		} catch (PDOException $exception) {
+			error_log($exception->getMessage());
+
+			Flash::error('Une erreur est survenue lors de la modification du trajet. Veuillez réessayer.');
+
+			return $this->redirect($response, '/');
+		}
+
+		Flash::success('Votre trajet a bien été modifié.');
 
 		return $this->redirect($response, '/');
 	}
 
 	/**
-	 * Handles the GET /trips/delete/:id action: deletes the trip, but only
-	 * when it belongs to the logged-in user.
+	 * Handles the POST /trips/delete/:id action: deletes the trip, but only
+	 * when it belongs to the logged-in user, then redirects to the homepage.
 	 *
 	 * The ownership check lives inside the SQL query
 	 * (see TripModel::deleteTripById()), so this action only guards the
 	 * authentication, then calls the model once. A trip that does not exist,
 	 * or that belongs to somebody else, simply redirects to the homepage —
-	 * the same visible outcome as an unauthorized update.
-	 *
-	 * Note: a destructive action reachable with a plain GET can also be
-	 * triggered by a link prefetch or a third-party page. A POST route plus
-	 * a CSRF token would be the safe production version.
+	 * the same visible outcome as an unauthorized update, and no success
+	 * message to avoid revealing anything.
 	 *
 	 * @param Request  $request  Incoming HTTP request (unused for now).
 	 * @param Response $response Outgoing HTTP response to redirect.
@@ -215,7 +242,23 @@ class TripController extends AbstractController
 			return $redirect;
 		}
 
-		$this->tripModel->deleteTripById($id, (int) $this->currentUserId());
+		$csrfRedirect = $this->rejectInvalidCsrf($request, $response, '/');
+
+		if ($csrfRedirect !== null) {
+			return $csrfRedirect;
+		}
+
+		try {
+			$this->tripModel->deleteTripById($id, (int) $this->currentUserId());
+		} catch (PDOException $exception) {
+			error_log($exception->getMessage());
+
+			Flash::error('Une erreur est survenue lors de la suppression du trajet. Veuillez réessayer.');
+
+			return $this->redirect($response, '/');
+		}
+
+		Flash::success('Votre trajet a bien été supprimé.');
 
 		return $this->redirect($response, '/');
 	}
@@ -341,63 +384,5 @@ class TripController extends AbstractController
 		}
 
 		return $this->render('update-trip', $data);
-	}
-
-	/**
-	 * Validates the two agency selects.
-	 *
-	 * @param Request $request Incoming HTTP request.
-	 * @return string|null An error message when the agencies are invalid, null otherwise.
-	 */
-	private function validateAgencies(Request $request): ?string
-	{
-		$depart = (int) $request->request->get('depart_id');
-		$destination = (int) $request->request->get('destination_id');
-
-		if ($depart === 0 || $destination === 0) {
-			return "L'agence de départ et l'agence d'arrivée sont obligatoires.";
-		}
-
-		if ($depart === $destination) {
-			return 'Les agences doivent être différentes.';
-		}
-
-		return null;
-	}
-
-	/**
-	 * Validates the departure and arrival date/time: both in the future,
-	 * arrival strictly after departure.
-	 *
-	 * @param Request $request Incoming HTTP request.
-	 * @return string|null An error message when the dates are invalid, null otherwise.
-	 */
-	private function validateDatesTimes(Request $request): ?string
-	{
-		$dateDepart = (string) $request->request->get('date_depart');
-		$heureDepart = (string) $request->request->get('heure_depart');
-		$dateArrivee = (string) $request->request->get('date_arrivee');
-		$heureArrivee = (string) $request->request->get('heure_arrivee');
-
-		if ($dateDepart === '' || $heureDepart === '' || $dateArrivee === '' || $heureArrivee === '') {
-			return "Le départ et l'arrivée (date et heure) sont obligatoires.";
-		}
-
-		try {
-			$gdhDepart = DateTimeFormatter::getDatetimeFormat($dateDepart, $heureDepart);
-			$gdhArrivee = DateTimeFormatter::getDatetimeFormat($dateArrivee, $heureArrivee);
-		} catch (\Exception $e) {
-			return 'Les dates saisies ne sont pas valides.';
-		}
-
-		if ($gdhDepart <= new DateTimeImmutable()) {
-			return "La date et l'heure de départ doivent être postérieures à maintenant.";
-		}
-
-		if ($gdhDepart >= $gdhArrivee) {
-			return "La date et l'heure d'arrivée doivent être postérieures à celles du départ.";
-		}
-
-		return null;
 	}
 }

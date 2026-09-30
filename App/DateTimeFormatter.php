@@ -5,10 +5,8 @@ namespace App;
 use DateTimeImmutable;
 
 /**
- * Formatter
- *
- * Small stateless helpers to display dates.
- * Centralizes the format so it is not duplicated in every template (DRY).
+ * Stateless date helpers, centralizing the display format so templates never
+ * duplicate it (DRY).
  */
 final class DateTimeFormatter
 {

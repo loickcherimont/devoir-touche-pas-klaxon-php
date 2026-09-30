@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Model\User\UserRole;
+use App\Security\Csrf;
+use App\Security\Flash;
 use App\View;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -117,5 +120,25 @@ abstract class AbstractController
     protected function hasRole(UserRole $role): bool
     {
         return $this->currentRole() === $role;
+    }
+
+    /**
+     * Rejects a POST request whose CSRF token does not match the session one,
+     * storing an error flash message so the user can retry the GET page.
+     *
+     * @param Request  $request  Incoming HTTP request carrying the submitted token.
+     * @param Response $response Outgoing HTTP response to turn into a redirect.
+     * @param string   $url      GET page to send the user back to (ex: '/trips/new').
+     * @return Response|null The redirect, or null when the token is valid.
+     */
+    protected function rejectInvalidCsrf(Request $request, Response $response, string $url): ?Response
+    {
+        if (Csrf::verify($request)) {
+            return null;
+        }
+
+        Flash::error('Votre session a expiré, veuillez réessayer.');
+
+        return $this->redirect($response, $url);
     }
 }
