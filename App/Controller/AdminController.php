@@ -51,6 +51,31 @@ class AdminController extends AbstractController
 	}
 
 	/**
+	 * Returns one agency as JSON to pre-fill the update modal.
+	 *
+	 * @param int $id Agency identifier from the URL.
+	 * @return Response The agency as JSON, 401 when anonymous, 404 when the
+	 *                  agency does not exist.
+	 */
+	public function findAgencyById(int $id): Response
+	{
+		if (!$this->isLoggedIn()) {
+			return $this->json(['message' => 'Authentification requise.'], Response::HTTP_UNAUTHORIZED);
+		}
+
+		$agency = $this->agencyModel->getAgencyById($id);
+
+		if ($agency === null) {
+			return $this->json(['message' => 'Agence introuvable.'], Response::HTTP_NOT_FOUND);
+		}
+
+		return $this->json([
+			'id' => $agency->id,
+			'nom' => $agency->nom,
+		]);
+	}
+
+	/**
 	 * Handles the POST /admin/agencies/new form: trims the submitted name,
 	 * rejects empty and duplicate values, inserts the agency and re-renders
 	 * the dashboard so the updated listing plus an error or success message are
@@ -83,6 +108,47 @@ class AdminController extends AbstractController
 		$this->agencyModel->saveAgency($nom);
 
 		return $this->renderDashboard($response, null, 'Agence créée avec succès');
+	}
+
+	/**
+	 * Handles the POST /admin/agencies/update form of the update modal.
+	 *
+	 * Reads the id from the hidden form field, rejects an unknown agency and a
+	 * duplicate name, then re-renders the dashboard so the updated listing plus
+	 * an error or success message are shown on the same page.
+	 *
+	 * Anyone who is not an admin is redirected to the login page instead of
+	 * being told the route exists.
+	 *
+	 * @param Request  $request  Incoming HTTP request containing the agency id
+	 *                           and the new name.
+	 * @param Response $response Outgoing HTTP response to fill with the page.
+	 * @return Response The dashboard with an error or success message, or a
+	 *                  redirect to /login when the role is not admin.
+	 */
+	public function updateAgency(Request $request, Response $response): Response
+	{
+		if (!$this->hasRole(UserRole::Admin)) {
+			return $this->redirect($response, '/login', Response::HTTP_FOUND);
+		}
+
+		$id = (int) $request->request->get('id');
+		$nom = trim((string) $request->request->get('nom'));
+		$agencyToUpdate = $this->agencyModel->getAgencyById($id);
+
+		if ($agencyToUpdate === null) {
+			return $this->renderDashboard($response, 'Agence non enregistrée. Réessayez avec une agence existante.');
+		}
+
+		$validationError = $this->validateAgency($nom, $id);
+
+		if ($validationError !== null) {
+			return $this->renderDashboard($response, $validationError);
+		}
+
+		$this->agencyModel->updateAgencyById($nom, $id);
+
+		return $this->renderDashboard($response, null, "L'agence a été modifiée avec succès.");
 	}
 
 	/**
@@ -148,5 +214,32 @@ class AdminController extends AbstractController
 			'error' => $error,
 			'success' => $success
 		]);
+	}
+
+	/**
+	 * Validates the agency update fields.
+	 *
+	 * The duplicate check looks for another agency sharing the submitted name:
+	 * the utf8mb4 collation already makes the comparison case-insensitive, so
+	 * "Bordeaux" and "bordeaux" collide naturally. Keeping the same name on the
+	 * edited agency is allowed.
+	 *
+	 * @param string $nom The submitted agency name.
+	 * @param int    $id  Id of the agency being updated.
+	 * @return string|null An error message, or null when the values are valid.
+	 */
+	private function validateAgency(string $nom, int $id): ?string
+	{
+		if ($nom === '') {
+			return "Vous devez fournir un nom d'agence.";
+		}
+
+		$existingAgency = $this->agencyModel->getAgencyByNom($nom);
+
+		if ($existingAgency !== null && $existingAgency->id !== $id) {
+			return 'Une agence existe déjà avec ce nom. Essayez avec un nom différent.';
+		}
+
+		return null;
 	}
 }

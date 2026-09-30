@@ -19,6 +19,7 @@
 /public/styles/
 /public/js/*
 !/public/js/TripDetailsModal.js
+!/public/js/AgencyModal.js
 
 # IDE
 .idea/

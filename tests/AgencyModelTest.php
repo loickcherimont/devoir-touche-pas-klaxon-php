@@ -44,6 +44,28 @@ class AgencyModelTest extends TestCase
 		$model->saveAgency(self::AGENCY_NAME);
 	}
 
+	public function testUpdateAgencyByIdSendsAnUpdateToPdoWithAgencyNewNameAndId(): void
+	{
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('UPDATE agencies'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->with([
+				'nom' => self::AGENCY_NAME,
+				'id' => self::AGENCY_ID
+			])
+			->willReturn(true);
+
+		$model = new AgencyModel($pdo);
+		$model->updateAgencyById(self::AGENCY_NAME, self::AGENCY_ID);
+	}
+
 	public function testDeleteAgencyByIdSendsADeleteToPdoWithTheAgencyId(): void
 	{
 		$pdo = $this->createMock(PDO::class);
