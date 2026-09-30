@@ -198,10 +198,47 @@ class AdminController extends AbstractController
 	}
 
 	/**
-	 * Renders the dashboard with the agencies and users listings.
+	 * Handles the GET /admin/trips/delete/:id action: deletes the trip, then
+	 * re-renders the dashboard to show the updated listing. Keeping the URL on
+	 * the :id means a refresh replays the same delete, which is a no-op once
+	 * the trip is gone — acceptable under the GET debt noted below.
+	 *
+	 * Unlike TripController::delete, this action drops the ownership condition:
+	 * the admin can remove any trip, whatever its author. The deletion is
+	 * carried by TripModel::deleteTripByAdminId(), whose SQL has no author
+	 * clause.
+	 *
+	 * Note: a destructive action reachable with a plain GET suffers the same
+	 * documented debt as /trips/delete/:id — a POST route plus a CSRF token
+	 * would be the safe production version.
+	 *
+	 * Anyone who is not an admin is redirected to the login page instead of
+	 * being told the route exists.
+	 *
+	 * @param Request  $request  Incoming HTTP request (unused for now).
+	 * @param Response $response Outgoing HTTP response to fill with the page.
+	 * @param int      $id       Trip identifier from the URL.
+	 * @return Response The dashboard with a success message, or a redirect to
+	 *                  /login when the role is not admin.
+	 */
+	public function deleteTrip(Request $request, Response $response, int $id): Response
+	{
+		if (!$this->hasRole(UserRole::Admin)) {
+			return $this->redirect($response, '/login', Response::HTTP_FOUND);
+		}
+
+		$this->tripModel->deleteTripByAdminId($id);
+
+		return $this->renderDashboard($response, null, 'Le trajet a bien été supprimé');
+	}
+
+	/**
+	 * Renders the dashboard with the agencies, users and trips listings.
 	 *
 	 * @param Response     $response Outgoing HTTP response to fill with the page.
 	 * @param string|null $error    Message to display above the agency form,
+	 *                               or null for a clean page.
+	 * @param string|null $success  Message to display above the agency form,
 	 *                               or null for a clean page.
 	 * @return Response The rendered dashboard.
 	 */
