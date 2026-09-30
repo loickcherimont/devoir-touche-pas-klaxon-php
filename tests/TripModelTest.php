@@ -6,6 +6,7 @@ use App\Model\Trip\TripDataDTO;
 use App\Model\Trip\TripModel;
 use DateTimeImmutable;
 use PDO;
+use PDOException;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
 
@@ -156,6 +157,106 @@ class TripModelTest extends TestCase
 			->willReturn(true);
 
 		$model = new TripModel($pdo);
+
+		$model->deleteTripByAdminId(self::TRIP_ID);
+	}
+
+	public function testSaveTripPropagatesThePdoExceptionThrownByExecution(): void
+	{
+		$tripData = $this->buildTripData();
+
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('INSERT INTO trips'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->willThrowException(new PDOException('Foreign key constraint fails', 23000));
+
+		$model = new TripModel($pdo);
+
+		$this->expectException(PDOException::class);
+
+		$model->saveTrip($tripData, self::USER_ID);
+	}
+
+	/**
+	 * The update goes through the same exception-free save() helper: a
+	 * rejection by the database must also reach the caller as a PDOException.
+	 */
+	public function testUpdateTripByIdPropagatesThePdoExceptionThrownByExecution(): void
+	{
+		$tripData = $this->buildTripData();
+
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('UPDATE trips'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->willThrowException(new PDOException('Foreign key constraint fails', 23000));
+
+		$model = new TripModel($pdo);
+
+		$this->expectException(PDOException::class);
+
+		$model->updateTripById($tripData, self::TRIP_ID);
+	}
+
+	/**
+	 * A failed delete must not be silently swallowed either: the caller needs
+	 * to know that the row is still in the database.
+	 */
+	public function testDeleteTripByIdPropagatesThePdoExceptionThrownByExecution(): void
+	{
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('DELETE FROM trips'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->willThrowException(new PDOException('Cannot delete the row', 23000));
+
+		$model = new TripModel($pdo);
+
+		$this->expectException(PDOException::class);
+
+		$model->deleteTripById(self::TRIP_ID, self::USER_ID);
+	}
+
+	/**
+	 * The admin delete follows the same rule as the regular one: the failure
+	 * propagates to the admin controller untouched.
+	 */
+	public function testDeleteTripByAdminIdPropagatesThePdoExceptionThrownByExecution(): void
+	{
+		$pdo = $this->createMock(PDO::class);
+		$pdoStmt = $this->createMock(PDOStatement::class);
+
+		$pdo->expects($this->once())
+			->method('prepare')
+			->with($this->stringContains('DELETE FROM trips'))
+			->willReturn($pdoStmt);
+
+		$pdoStmt->expects($this->once())
+			->method('execute')
+			->willThrowException(new PDOException('Cannot delete the row', 23000));
+
+		$model = new TripModel($pdo);
+
+		$this->expectException(PDOException::class);
 
 		$model->deleteTripByAdminId(self::TRIP_ID);
 	}
